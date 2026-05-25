@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sensitivity Calculator — Quake / Diabotical / FOV</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><span>Sens</span>Tool</h1>
+      <p>Sensitivity converters for Quake Source, Diabotical &amp; FOV changes</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn" data-tab="fov">FOV Calculator</button>
+      <button class="tab-btn active" data-tab="q2dbt">Quake → Diabotical</button>
+      <button class="tab-btn" data-tab="dbt2q">Diabotical → Quake</button>
+    </nav>
+
+    <!-- ============= FOV CALCULATOR ============= -->
+    <section class="tab-panel" id="tab-fov">
+      <div class="card">
+        <div class="card-title">FOV &amp; Zoom Sensitivity</div>
+        <div class="form-group">
+          <label>cm/360</label>
+          <input type="number" id="fov-cm360" value="14.00" step="any" oninput="cm360toFov()">
+        </div>
+        <div class="form-group">
+          <label>DPI</label>
+          <input type="number" id="fov-dpi" value="1600" step="any" oninput="cm360toFov()">
+        </div>
+        <div class="form-group">
+          <label>Sensitivity</label>
+          <input type="number" id="fov-sens" value="1.855519" step="any" oninput="document.getElementById('fov-cm360').value=''; calcFov()">
+        </div>
+        <div class="form-group">
+          <label>Acceleration</label>
+          <input type="number" id="fov-accel" value="0.01" step="any" oninput="calcFov()">
+        </div>
+        <div class="form-group">
+          <label>Original FOV</label>
+          <input type="number" id="fov-original" value="115" step="any" oninput="calcFov()">
+        </div>
+        <div class="form-group">
+          <label>New / Zoom FOV</label>
+          <input type="number" id="fov-zoom" value="100" step="any" oninput="calcFov()">
+        </div>
+        <div class="form-group">
+          <label>
+            Scale / Game
+            <span class="hint">Source game's FOV convention</span>
+          </label>
+          <select id="fov-type" onchange="cm360toFov()">
+            <option value="0.5625">16:9 Quake Champions (HFOV)</option>
+            <option value="0.75">4:3 Quake Source (HFOV)</option>
+            <option value="1">1:1 Diabotical (VFOV)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="fov-zoomsens" class="result-block visible">
+        <div class="result-section">
+          <div class="section-label">Zoom Sensitivity (monitor-distance match)</div>
+          <b>Sensitivity:</b> <span id="fov-sens-out">--</span><br>
+          <b>Acceleration:</b> <span id="fov-accel-out">--</span>
+          <div class="btn-row" style="justify-content: flex-start; margin-top: 0.5rem;">
+            <button class="btn btn-sm btn-secondary" onclick="sendToQ2DBT()">Use in Quake → DBT</button>
+            <button class="btn btn-sm btn-secondary" onclick="sendToDBT2Q()">Use in DBT → Quake</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fov-results">
+        <div class="fov-result-card" id="fov-card-normal">
+          <div class="fov-label">Original FOV Conversions</div>
+          <div class="fov-values">
+            16:9 = <span id="fov-n-169">--</span>&deg;<br>
+            4:3 = <span id="fov-n-43">--</span>&deg;<br>
+            1:1 = <span id="fov-n-11">--</span>&deg;
+          </div>
+        </div>
+        <div class="fov-result-card" id="fov-card-zoom">
+          <div class="fov-label">Zoom FOV Conversions</div>
+          <div class="fov-values">
+            16:9 = <span id="fov-z-169">--</span>&deg;<br>
+            4:3 = <span id="fov-z-43">--</span>&deg;<br>
+            1:1 = <span id="fov-z-11">--</span>&deg;
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= QUAKE → DIABOTICAL ============= -->
+    <section class="tab-panel active" id="tab-q2dbt">
+      <div class="card">
+        <div class="card-title">Resolution &amp; DPI</div>
+        <div class="form-group">
+          <label>cm/360</label>
+          <input type="number" id="q2d-cm360" value="14.00" step="any" oninput="cm360toQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>Old DPI</label>
+          <input type="number" id="q2d-old-dpi" value="1600" step="any" oninput="cm360toQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>Old resolution (vertical)</label>
+          <input type="number" id="q2d-old-res" value="1080" step="any" oninput="calcQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>New resolution (vertical)</label>
+          <input type="number" id="q2d-new-res" value="1440" step="any" oninput="calcQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>New DPI</label>
+          <input type="number" id="q2d-new-dpi" value="1600" step="any" oninput="calcQ2DBT()">
+        </div>
+        <div class="result-block visible" style="margin-top: 0.75rem; border-left-color: var(--accent-blue);">
+          <b>DPI for new resolution:</b> <span id="q2d-res-dpi">--</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quake Source Settings</div>
+        <div class="form-group">
+          <label>Sensitivity</label>
+          <input type="number" id="q2d-sens" value="1.855519" step="any" oninput="document.getElementById('q2d-cm360').value=''; calcQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>SensCap</label>
+          <input type="number" id="q2d-senscap" value="2.5" step="any" oninput="calcQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>Accel (cl_mouseAccel)</label>
+          <input type="number" id="q2d-accel" value="0.01" step="any" oninput="calcQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>Yaw / Pitch (m_yaw)</label>
+          <input type="number" id="q2d-yaw" value="0.022" step="any" oninput="cm360toQ2DBT()">
+        </div>
+        <div class="form-group">
+          <label>
+            Desired yaw / pitch
+            <span class="hint">0.022 for Quake, 0.01666667 for DBT preset</span>
+          </label>
+          <input type="number" id="q2d-new-yaw" value="0.022" step="any" oninput="calcQ2DBT()">
+        </div>
+      </div>
+
+      <div id="q2d-result" class="result-block"></div>
+    </section>
+
+    <!-- ============= DIABOTICAL → QUAKE ============= -->
+    <section class="tab-panel" id="tab-dbt2q">
+      <div class="card">
+        <div class="card-title">cm/360 &amp; DPI</div>
+        <div class="form-group">
+          <label>
+            cm/360
+            <span class="hint">Enter cm/360 + DPI to auto-calculate</span>
+          </label>
+          <input type="number" id="d2q-cm360" value="14.00" step="any" oninput="cm360toDBT2Q()">
+        </div>
+        <div class="form-group">
+          <label>DPI</label>
+          <input type="number" id="d2q-dpi" value="1600" step="any" oninput="cm360toDBT2Q()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Diabotical Settings</div>
+        <div class="form-group">
+          <label>mouse_sensitivity</label>
+          <input type="number" id="d2q-sens" value="1.855519" step="any" oninput="document.getElementById('d2q-cm360').value=''; calcDBT2Q()">
+        </div>
+        <div class="form-group">
+          <label>mouse_accel_cap</label>
+          <input type="number" id="d2q-accelcap" value="2" step="any" oninput="calcDBT2Q()">
+        </div>
+        <div class="form-group">
+          <label>mouse_accel_ramp</label>
+          <input type="number" id="d2q-accel" value="0.01" step="any" oninput="calcDBT2Q()">
+        </div>
+        <div class="form-group">
+          <label>
+            mouse_accel_post_scale_x
+            <span class="hint">Default 1, Quake default equiv: 1.32</span>
+          </label>
+          <input type="number" id="d2q-yaw" value="1.32" step="any" oninput="cm360toDBT2Q()">
+        </div>
+      </div>
+
+      <div id="d2q-result" class="result-block"></div>
+    </section>
+
+    <footer>
+      Made by <a href="https://mikul.se">mikul</a> &mdash; Human knowledge belongs to the people
+    </footer>
+  </div>
+
+  <script>
+    // ========= TAB SWITCHING =========
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ========= UTILITY =========
+    function deg2rad(d) { return d * (Math.PI / 180); }
+    function rad2deg(r) { return r * (180 / Math.PI); }
+    function clamp(v, fallback) { var n = parseFloat(v); return isNaN(n) || n < 0 ? fallback : n; }
+
+    // ========= FOV CALCULATOR =========
+    function cm360toFov() {
+      var cm360El = document.getElementById('fov-cm360');
+      var cm360 = parseFloat(cm360El.value);
+      if (!isNaN(cm360) && cm360 > 0) {
+        var dpi = clamp(document.getElementById('fov-dpi').value, 1600);
+        var fovType = parseFloat(document.getElementById('fov-type').value);
+        var yaw = fovType === 1 ? 0.01666667 : 0.022;
+        var sens = 914.4 / (yaw * dpi * cm360);
+        document.getElementById('fov-sens').value = sens.toFixed(6);
+      }
+      calcFov();
+    }
+
+    function calcFov() {
+      var sens = clamp(document.getElementById('fov-sens').value, 1.855519);
+      var accel = clamp(document.getElementById('fov-accel').value, 0.01);
+      var fov = clamp(document.getElementById('fov-original').value, 115);
+      var zoomFov = clamp(document.getElementById('fov-zoom').value, 100);
+      var fovType = parseFloat(document.getElementById('fov-type').value);
+
+      function zoomSens(s, f, zf, ft) {
+        return s * Math.atan(ft * Math.tan(deg2rad(zf / 2))) / Math.atan(ft * Math.tan(deg2rad(f / 2)));
+      }
+
+      function fovConvert(f, ft) {
+        var hf = f / 2;
+        return {
+          fov169: rad2deg(Math.atan((ft / 0.5625) * Math.tan(deg2rad(hf)))) * 2,
+          fov43:  rad2deg(Math.atan((ft / 0.75)   * Math.tan(deg2rad(hf)))) * 2,
+          fov11:  rad2deg(Math.atan((ft / 1)      * Math.tan(deg2rad(hf)))) * 2
+        };
+      }
+
+      var newSens = zoomSens(sens, fov, zoomFov, fovType);
+      var newAccel = zoomSens(accel, fov, zoomFov, fovType);
+      var orig = fovConvert(fov, fovType);
+      var zoom = fovConvert(zoomFov, fovType);
+
+      document.getElementById('fov-sens-out').textContent = newSens.toFixed(6);
+      document.getElementById('fov-accel-out').textContent = newAccel.toFixed(6);
+
+      document.getElementById('fov-n-169').textContent = orig.fov169.toFixed(2);
+      document.getElementById('fov-n-43').textContent = orig.fov43.toFixed(2);
+      document.getElementById('fov-n-11').textContent = orig.fov11.toFixed(2);
+      document.getElementById('fov-z-169').textContent = zoom.fov169.toFixed(2);
+      document.getElementById('fov-z-43').textContent = zoom.fov43.toFixed(2);
+      document.getElementById('fov-z-11').textContent = zoom.fov11.toFixed(2);
+
+      // store for transfer buttons
+      window._fovNewSens = newSens;
+      window._fovNewAccel = newAccel;
+    }
+
+    // ========= FOV → SENS CALC TRANSFER =========
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === name);
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'tab-' + name);
+      });
+    }
+
+    function sendToQ2DBT() {
+      if (window._fovNewSens != null) {
+        document.getElementById('q2d-cm360').value = '';
+        document.getElementById('q2d-sens').value = window._fovNewSens.toFixed(6);
+        document.getElementById('q2d-accel').value = window._fovNewAccel.toFixed(6);
+      }
+      switchTab('q2dbt');
+      calcQ2DBT();
+    }
+
+    function sendToDBT2Q() {
+      if (window._fovNewSens != null) {
+        document.getElementById('d2q-cm360').value = '';
+        document.getElementById('d2q-sens').value = window._fovNewSens.toFixed(6);
+      }
+      switchTab('dbt2q');
+      calcDBT2Q();
+    }
+
+    // ========= QUAKE → DIABOTICAL =========
+    function cm360toQ2DBT() {
+      var cm360El = document.getElementById('q2d-cm360');
+      var cm360 = parseFloat(cm360El.value);
+      if (!isNaN(cm360) && cm360 > 0) {
+        var oldDpi = clamp(document.getElementById('q2d-old-dpi').value, 1600);
+        var yaw = clamp(document.getElementById('q2d-yaw').value, 0.022);
+        var sens = 914.4 / (yaw * oldDpi * cm360);
+        document.getElementById('q2d-sens').value = sens.toFixed(6);
+      }
+      calcQ2DBT();
+    }
+
+    function calcQ2DBT() {
+      var oldDpi   = clamp(document.getElementById('q2d-old-dpi').value, 1600);
+      var newDpi   = clamp(document.getElementById('q2d-new-dpi').value, 1600);
+      var sens     = clamp(document.getElementById('q2d-sens').value, 1.855519);
+      var senscap  = clamp(document.getElementById('q2d-senscap').value, 2.5);
+      var accel    = clamp(document.getElementById('q2d-accel').value, 0.01);
+      var yaw      = clamp(document.getElementById('q2d-yaw').value, 0.022);
+      var newYaw   = clamp(document.getElementById('q2d-new-yaw').value, 0.022);
+      var oldRes   = clamp(document.getElementById('q2d-old-res').value, 1080);
+      var newRes   = clamp(document.getElementById('q2d-new-res').value, 1440);
+
+      var dpiRatio = oldDpi / newDpi;
+      var yawRatio = yaw / newYaw;
+      var resDpi   = (newRes / oldRes) * oldDpi;
+
+      var newSens    = sens * dpiRatio * yawRatio;
+      var newAccel   = accel * dpiRatio * dpiRatio;
+      var newSenscap = senscap * dpiRatio * yawRatio;
+      var cm360      = (360 / (newYaw * newDpi * newSens)) * 2.54;
+
+      var dbtSens    = newSens;
+      var dbtAccel   = newAccel / dbtSens;
+      var dbtSenscap = (senscap * yawRatio * dpiRatio) / dbtSens;
+      var dbtYaw     = newYaw * 60;
+
+      document.getElementById('q2d-res-dpi').textContent = resDpi.toFixed(1);
+
+      document.getElementById('q2d-result').innerHTML =
+        '<div class="result-section">' +
+          '<div class="section-label">Quake / QL Settings</div>' +
+          '<b>seta sensitivity</b> <span class="cmd">' + newSens.toFixed(6) + '</span><br>' +
+          '<b>seta cl_mouseSensCap</b> <span class="cmd">' + newSenscap.toFixed(6) + '</span><br>' +
+          '<b>seta cl_mouseAccel</b> <span class="cmd">' + newAccel.toFixed(8) + '</span><br>' +
+          '<b>seta m_yaw</b> <span class="cmd">' + newYaw.toFixed(6) + '</span><br>' +
+          '<b>seta m_pitch</b> <span class="cmd">' + newYaw.toFixed(6) + '</span><br>' +
+          '<b>seta cl_mouseAccelPower</b> <span class="cmd">2</span>' +
+        '</div>' +
+        '<div class="result-section">' +
+          '<div class="section-label">Results</div>' +
+          '<b>cm/360:</b> <span class="cmd">' + cm360.toFixed(2) + '</span>' +
+        '</div>' +
+        '<div class="result-section">' +
+          '<div class="section-label">Diabotical Settings</div>' +
+          '<b>mouse_sensitivity</b> <span class="cmd">' + dbtSens.toFixed(6) + '</span><br>' +
+          '<b>mouse_accel_cap</b> <span class="cmd">' + dbtSenscap.toFixed(6) + '</span><br>' +
+          '<b>mouse_accel_ramp</b> <span class="cmd">' + dbtAccel.toFixed(8) + '</span><br>' +
+          '<b>mouse_accel_post_scale_x</b> <span class="cmd">' + dbtYaw.toFixed(5) + '</span><br>' +
+          '<b>mouse_accel_post_scale_y</b> <span class="cmd">' + dbtYaw.toFixed(5) + '</span>' +
+        '</div>';
+      document.getElementById('q2d-result').classList.add('visible');
+    }
+
+    // ========= DIABOTICAL → QUAKE =========
+    function cm360toDBT2Q() {
+      var cm360El = document.getElementById('d2q-cm360');
+      var cm360 = parseFloat(cm360El.value);
+      if (!isNaN(cm360) && cm360 > 0) {
+        var dpi = clamp(document.getElementById('d2q-dpi').value, 1600);
+        var dbtYaw = clamp(document.getElementById('d2q-yaw').value, 1.32);
+        var dbtSens = 54864 / (dbtYaw * dpi * cm360);
+        document.getElementById('d2q-sens').value = dbtSens.toFixed(6);
+      }
+      calcDBT2Q();
+    }
+
+    function calcDBT2Q() {
+      var dbtSens     = clamp(document.getElementById('d2q-sens').value, 1.855519);
+      var dbtAccelCap = clamp(document.getElementById('d2q-accelcap').value, 2);
+      var dbtAccel    = clamp(document.getElementById('d2q-accel').value, 0.01);
+      var dbtYaw      = clamp(document.getElementById('d2q-yaw').value, 1.32);
+      var dpi         = clamp(document.getElementById('d2q-dpi').value, 1600);
+
+      var quakeSens    = dbtSens;
+      var quakeAccel   = dbtAccel * dbtSens;
+      var quakeSenscap = dbtAccelCap * dbtSens;
+      var quakeYaw     = dbtYaw / 60;
+      var cm360        = (360 / (quakeYaw * dpi * quakeSens)) * 2.54;
+
+      document.getElementById('d2q-result').innerHTML =
+        '<div class="result-section">' +
+          '<div class="section-label">Quake / QL Settings</div>' +
+          '<b>seta sensitivity</b> <span class="cmd">' + quakeSens.toFixed(6) + '</span><br>' +
+          '<b>seta cl_mouseSensCap</b> <span class="cmd">' + quakeSenscap.toFixed(6) + '</span><br>' +
+          '<b>seta cl_mouseAccel</b> <span class="cmd">' + quakeAccel.toFixed(8) + '</span><br>' +
+          '<b>seta m_yaw</b> <span class="cmd">' + quakeYaw.toFixed(7) + '</span><br>' +
+          '<b>seta m_pitch</b> <span class="cmd">' + quakeYaw.toFixed(7) + '</span><br>' +
+          '<b>seta cl_mouseAccelPower</b> <span class="cmd">2</span>' +
+        '</div>' +
+        '<div class="result-section">' +
+          '<div class="section-label">Results</div>' +
+          '<b>cm/360:</b> <span class="cmd">' + cm360.toFixed(2) + '</span>' +
+        '</div>';
+      document.getElementById('d2q-result').classList.add('visible');
+    }
+
+    // initial calculations on page load
+    calcFov();
+    calcQ2DBT();
+    calcDBT2Q();
+  </script>
+</body>
+</html>
