@@ -14,6 +14,8 @@ Sensitivity calculator for Quake Source engine and Diabotical, plus FOV-to-sensi
 
 No build required. Open `senstool.html` in any modern web browser.
 
+**Demo:** <https://mikul.se/senstool.html>
+
 ## Credits
 
 Made by Micke "mikul" Pollak.
