@@ -16,7 +16,7 @@ No build required. Open `senstool.html` in any modern web browser.
 
 ## Credits
 
-Made by Micke "mikul" Nyberg (2020–2026).
+Made by Micke "mikul" Pollak.
 
 Thanks to Yakumo, notuern, Spart1e, !OP discord, AnimaFPS, PresBTW, Kovaak, czm, ESReality.com, raven, and the Diabotical team.
 
