@@ -572,3 +572,107 @@ footer a:hover { color: var(--text); }
 
   .fov-results { grid-template-columns: 1fr; }
 }
+
+/* ── Visualizations ──────────────────────────────────── */
+.visual-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .visual-row { grid-template-columns: 1fr; }
+}
+
+/* ── Sensitivity spectrum bar ────────────────────────── */
+.spectrum-bar { }
+
+.spectrum-slider-wrap {
+  padding: 0 0 9px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.spectrum-slider-wrap input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--coral), #e8c547, var(--accent-green));
+  outline: none;
+  cursor: pointer;
+  margin: 2px 0 1px;
+}
+
+.spectrum-slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.spectrum-slider-wrap input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.spectrum-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Mousepad visualizer ─────────────────────────────── */
+.pad-visual { }
+
+.pad-track {
+  display: flex;
+  height: 8px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  margin: 9px 0 5px;
+}
+
+.pad-track .pad-segment {
+  background: var(--accent-green);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.pad-track .pad-segment:nth-child(odd) { opacity: 0.35; }
+.pad-track .pad-segment:last-child { border-right: none; }
+.pad-track .pad-remainder { opacity: 0.2; background: var(--blue); }
+
+.pad-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── FOV cone SVG ────────────────────────────────────── */
+.fov-cone-container {
+  margin-top: 14px;
+}
+
+.fov-cone-container svg {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
