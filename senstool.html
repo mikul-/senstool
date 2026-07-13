@@ -23,8 +23,7 @@
 
     <nav class="tabs">
       <button class="tab-btn" data-tab="fov">FOV Calculator</button>
-      <button class="tab-btn active" data-tab="q2dbt">Quake → Diabotical</button>
-      <button class="tab-btn" data-tab="dbt2q">Diabotical → Quake</button>
+      <button class="tab-btn active" data-tab="quake-dbt">Quake ↔ Diabotical</button>
       <button class="tab-btn" data-tab="multigame">Multi‑Game</button>
     </nav>
 
@@ -73,7 +72,8 @@
         <div class="result-section">
           <div class="section-label">Zoom Sensitivity (monitor-distance match)</div>
           <b>Sensitivity:</b> <span id="fov-sens-out">--</span><br>
-          <b>Acceleration:</b> <span id="fov-accel-out">--</span>
+          <b>Acceleration:</b> <span id="fov-accel-out">--</span><br>
+          <b>eDPI:</b> <span id="fov-edpi-out">--</span>
           <div class="btn-row" style="justify-content: flex-start; margin-top: 0.5rem;">
             <button class="btn btn-sm btn-secondary" onclick="sendToQ2DBT()">Use in Quake → DBT</button>
             <button class="btn btn-sm btn-secondary" onclick="sendToDBT2Q()">Use in DBT → Quake</button>
@@ -101,105 +101,94 @@
       </div>
     </section>
 
-    <!-- ============= QUAKE → DIABOTICAL ============= -->
-    <section class="tab-panel active" id="tab-q2dbt">
+    <!-- ============= QUAKE ↔ DIABOTICAL ============= -->
+    <section class="tab-panel active" id="tab-quake-dbt">
       <div class="card">
-        <div class="card-title">Resolution &amp; DPI</div>
+        <div class="card-title">cm/360</div>
         <div class="form-group">
           <label>cm/360</label>
-          <input type="number" id="q2d-cm360" value="14.00" step="any" oninput="cm360toQ2DBT()">
+          <input type="number" id="qd-cm360" value="14.00" step="any" oninput="cm360toQD()">
         </div>
+      </div>
+
+      <div class="card" id="qd-res-card">
+        <div class="card-title">Resolution &amp; DPI Scaling</div>
         <div class="form-group">
           <label>Old DPI</label>
-          <input type="number" id="q2d-old-dpi" value="1600" step="any" oninput="cm360toQ2DBT()">
+          <input type="number" id="q2d-old-dpi" value="1600" step="any" oninput="cm360toQD()">
         </div>
         <div class="form-group">
           <label>Old resolution (vertical)</label>
-          <input type="number" id="q2d-old-res" value="1080" step="any" oninput="calcQ2DBT()">
+          <input type="number" id="q2d-old-res" value="1080" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>New resolution (vertical)</label>
-          <input type="number" id="q2d-new-res" value="1440" step="any" oninput="calcQ2DBT()">
+          <input type="number" id="q2d-new-res" value="1440" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>New DPI</label>
-          <input type="number" id="q2d-new-dpi" value="1600" step="any" oninput="calcQ2DBT()">
+          <input type="number" id="q2d-new-dpi" value="1600" step="any" oninput="calcQD()">
         </div>
         <div class="result-block visible" style="margin-top: 0.75rem; border-left-color: var(--accent-blue);">
           <b>DPI for new resolution:</b> <span id="q2d-res-dpi">--</span>
         </div>
       </div>
 
-      <div class="card">
+      <div class="btn-row" style="justify-content: center; margin: 0.75rem 0;">
+        <button class="btn btn-sm btn-secondary" onclick="swapQD()" id="qd-swap-btn">&uarr;&darr; Swap (Quake &rarr; Diabotical)</button>
+      </div>
+
+      <div class="card" id="qd-quake-card">
         <div class="card-title">Quake Source Settings</div>
         <div class="form-group">
           <label>Sensitivity</label>
-          <input type="number" id="q2d-sens" value="1.855519" step="any" oninput="document.getElementById('q2d-cm360').value=''; calcQ2DBT()">
+          <input type="number" id="q2d-sens" value="1.855519" step="any" oninput="document.getElementById('qd-cm360').value=''; calcQD()">
         </div>
         <div class="form-group">
           <label>SensCap</label>
-          <input type="number" id="q2d-senscap" value="2.5" step="any" oninput="calcQ2DBT()">
+          <input type="number" id="q2d-senscap" value="2.5" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>Accel (cl_mouseAccel)</label>
-          <input type="number" id="q2d-accel" value="0.01" step="any" oninput="calcQ2DBT()">
+          <input type="number" id="q2d-accel" value="0.01" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>Yaw / Pitch (m_yaw)</label>
-          <input type="number" id="q2d-yaw" value="0.022" step="any" oninput="cm360toQ2DBT()">
+          <input type="number" id="q2d-yaw" value="0.022" step="any" oninput="cm360toQD()">
         </div>
         <div class="form-group">
           <label>
             Desired yaw / pitch
             <span class="hint">0.022 for Quake, 0.01666667 for DBT preset</span>
           </label>
-          <input type="number" id="q2d-new-yaw" value="0.022" step="any" oninput="calcQ2DBT()">
+          <input type="number" id="q2d-new-yaw" value="0.022" step="any" oninput="calcQD()">
         </div>
       </div>
 
-      <div id="q2d-result" class="result-block"></div>
-    </section>
-
-    <!-- ============= DIABOTICAL → QUAKE ============= -->
-    <section class="tab-panel" id="tab-dbt2q">
-      <div class="card">
-        <div class="card-title">cm/360 &amp; DPI</div>
-        <div class="form-group">
-          <label>
-            cm/360
-            <span class="hint">Enter cm/360 + DPI to auto-calculate</span>
-          </label>
-          <input type="number" id="d2q-cm360" value="14.00" step="any" oninput="cm360toDBT2Q()">
-        </div>
-        <div class="form-group">
-          <label>DPI</label>
-          <input type="number" id="d2q-dpi" value="1600" step="any" oninput="cm360toDBT2Q()">
-        </div>
-      </div>
-      <div class="card">
+      <div class="card" id="qd-dbt-card" style="display:none;">
         <div class="card-title">Diabotical Settings</div>
         <div class="form-group">
           <label>mouse_sensitivity</label>
-          <input type="number" id="d2q-sens" value="1.855519" step="any" oninput="document.getElementById('d2q-cm360').value=''; calcDBT2Q()">
+          <input type="number" id="d2q-sens" value="1.855519" step="any" oninput="document.getElementById('qd-cm360').value=''; calcQD()">
         </div>
         <div class="form-group">
           <label>mouse_accel_cap</label>
-          <input type="number" id="d2q-accelcap" value="2" step="any" oninput="calcDBT2Q()">
+          <input type="number" id="d2q-accelcap" value="2" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>mouse_accel_ramp</label>
-          <input type="number" id="d2q-accel" value="0.01" step="any" oninput="calcDBT2Q()">
+          <input type="number" id="d2q-accel" value="0.01" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>
             mouse_accel_post_scale_x
             <span class="hint">Default 1, Quake default equiv: 1.32</span>
           </label>
-          <input type="number" id="d2q-yaw" value="1.32" step="any" oninput="cm360toDBT2Q()">
+          <input type="number" id="d2q-yaw" value="1.32" step="any" oninput="cm360toQD()">
         </div>
       </div>
 
-      <div id="d2q-result" class="result-block"></div>
+      <div id="qd-result" class="result-block"></div>
     </section>
 
     <!-- ============= MULTI-GAME CONVERTER ============= -->
@@ -238,6 +227,10 @@
         </div>
       </div>
 
+      <div class="btn-row" style="justify-content: center;">
+        <button class="btn btn-sm btn-secondary" onclick="swapMg()" title="Swap source and target">&uarr;&darr; Swap</button>
+      </div>
+
       <div class="card">
         <div class="card-title">Target Game</div>
         <div class="form-group">
@@ -245,10 +238,12 @@
           <select id="mg-target-game" class="game-select" onchange="calcMultiGame()"></select>
         </div>
         <div id="mg-target-sens-section" class="result-block" style="margin-top: 0.5rem;">
-          <b>Sensitivity:</b> <span id="mg-target-sens" class="cmd">--</span>
+          <b>Sensitivity:</b> <span id="mg-target-sens" class="cmd">--</span><br>
+          <b>eDPI:</b> <span id="mg-edpi" class="cmd">--</span>
         </div>
         <div id="mg-result" class="result-block" style="margin-top: 0.5rem;">
-          <b>cm/360:</b> <span id="mg-cm360" class="cmd">--</span>
+          <b>cm/360:</b> <span id="mg-cm360" class="cmd">--</span><br>
+          <b>in/360:</b> <span id="mg-in360" class="cmd">--</span>
         </div>
         <div class="fov-results" style="margin-top: 0.5rem;">
           <div class="fov-result-card">
@@ -262,6 +257,10 @@
         </div>
         <div id="mg-target-fov-section" class="result-block" style="margin-top: 0.5rem;">
           <b>Equivalent FOV:</b> <span id="mg-target-fov" class="cmd">--</span>
+        </div>
+        <div id="mg-quickref-section" class="result-block" style="margin-top: 0.5rem; border-left-color: var(--accent-blue);">
+          <div class="section-label">Quick Reference</div>
+          <div id="mg-quickref">--</div>
         </div>
       </div>
     </section>
@@ -326,8 +325,10 @@
       var orig = fovConvert(fov, fovType);
       var zoom = fovConvert(zoomFov, fovType);
 
+      var dpi = clamp(document.getElementById('fov-dpi').value, 1600);
       document.getElementById('fov-sens-out').textContent = newSens.toFixed(6);
       document.getElementById('fov-accel-out').textContent = newAccel.toFixed(6);
+      document.getElementById('fov-edpi-out').textContent = (sens * dpi).toFixed(1);
 
       document.getElementById('fov-n-169').textContent = orig.fov169.toFixed(2);
       document.getElementById('fov-n-43').textContent = orig.fov43.toFixed(2);
@@ -353,131 +354,141 @@
 
     function sendToQ2DBT() {
       if (window._fovNewSens != null) {
-        document.getElementById('q2d-cm360').value = '';
+        document.getElementById('qd-cm360').value = '';
         document.getElementById('q2d-sens').value = window._fovNewSens.toFixed(6);
         document.getElementById('q2d-accel').value = window._fovNewAccel.toFixed(6);
       }
-      switchTab('q2dbt');
-      calcQ2DBT();
+      _qdDirection = 'q2dbt';
+      updateQDDirection();
+      switchTab('quake-dbt');
+      calcQD();
     }
 
     function sendToDBT2Q() {
       if (window._fovNewSens != null) {
-        document.getElementById('d2q-cm360').value = '';
+        document.getElementById('qd-cm360').value = '';
         document.getElementById('d2q-sens').value = window._fovNewSens.toFixed(6);
       }
-      switchTab('dbt2q');
-      calcDBT2Q();
-    loadMultiGameData();
+      _qdDirection = 'dbt2q';
+      updateQDDirection();
+      switchTab('quake-dbt');
+      calcQD();
     }
 
-    // ========= QUAKE → DIABOTICAL =========
-    function cm360toQ2DBT() {
-      var cm360El = document.getElementById('q2d-cm360');
-      var cm360 = parseFloat(cm360El.value);
+    // ========= QUAKE ↔ DIABOTICAL =========
+    var _qdDirection = 'q2dbt';
+
+    function swapQD() {
+      _qdDirection = (_qdDirection === 'q2dbt') ? 'dbt2q' : 'q2dbt';
+      updateQDDirection();
+      calcQD();
+    }
+
+    function updateQDDirection() {
+      var isQ2DBT = _qdDirection === 'q2dbt';
+      document.getElementById('qd-quake-card').style.display = isQ2DBT ? '' : 'none';
+      document.getElementById('qd-dbt-card').style.display = isQ2DBT ? 'none' : '';
+      document.getElementById('qd-swap-btn').innerHTML = isQ2DBT ? '&uarr;&darr; Swap (Quake &rarr; Diabotical)' : '&uarr;&darr; Swap (Diabotical &rarr; Quake)';
+    }
+
+    function cm360toQD() {
+      var cm360 = parseFloat(document.getElementById('qd-cm360').value);
       if (!isNaN(cm360) && cm360 > 0) {
-        var oldDpi = clamp(document.getElementById('q2d-old-dpi').value, 1600);
-        var yaw = clamp(document.getElementById('q2d-yaw').value, 0.022);
-        var sens = 914.4 / (yaw * oldDpi * cm360);
-        document.getElementById('q2d-sens').value = sens.toFixed(6);
+        if (_qdDirection === 'q2dbt') {
+          var oldDpi = clamp(document.getElementById('q2d-old-dpi').value, 1600);
+          var yaw = clamp(document.getElementById('q2d-yaw').value, 0.022);
+          var sens = 914.4 / (yaw * oldDpi * cm360);
+          document.getElementById('q2d-sens').value = sens.toFixed(6);
+        } else {
+          var dpi = clamp(document.getElementById('q2d-old-dpi').value, 1600);
+          var dbtYaw = clamp(document.getElementById('d2q-yaw').value, 1.32);
+          var dbtSens = 54864 / (dbtYaw * dpi * cm360);
+          document.getElementById('d2q-sens').value = dbtSens.toFixed(6);
+        }
       }
-      calcQ2DBT();
+      calcQD();
     }
 
-    function calcQ2DBT() {
-      var oldDpi   = clamp(document.getElementById('q2d-old-dpi').value, 1600);
-      var newDpi   = clamp(document.getElementById('q2d-new-dpi').value, 1600);
-      var sens     = clamp(document.getElementById('q2d-sens').value, 1.855519);
-      var senscap  = clamp(document.getElementById('q2d-senscap').value, 2.5);
-      var accel    = clamp(document.getElementById('q2d-accel').value, 0.01);
-      var yaw      = clamp(document.getElementById('q2d-yaw').value, 0.022);
-      var newYaw   = clamp(document.getElementById('q2d-new-yaw').value, 0.022);
-      var oldRes   = clamp(document.getElementById('q2d-old-res').value, 1080);
-      var newRes   = clamp(document.getElementById('q2d-new-res').value, 1440);
+    function calcQD() {
+      if (_qdDirection === 'q2dbt') {
+        var oldDpi   = clamp(document.getElementById('q2d-old-dpi').value, 1600);
+        var newDpi   = clamp(document.getElementById('q2d-new-dpi').value, 1600);
+        var sens     = clamp(document.getElementById('q2d-sens').value, 1.855519);
+        var senscap  = clamp(document.getElementById('q2d-senscap').value, 2.5);
+        var accel    = clamp(document.getElementById('q2d-accel').value, 0.01);
+        var yaw      = clamp(document.getElementById('q2d-yaw').value, 0.022);
+        var newYaw   = clamp(document.getElementById('q2d-new-yaw').value, 0.022);
+        var oldRes   = clamp(document.getElementById('q2d-old-res').value, 1080);
+        var newRes   = clamp(document.getElementById('q2d-new-res').value, 1440);
 
-      var dpiRatio = oldDpi / newDpi;
-      var yawRatio = yaw / newYaw;
-      var resDpi   = (newRes / oldRes) * oldDpi;
+        var dpiRatio = oldDpi / newDpi;
+        var yawRatio = yaw / newYaw;
+        var resDpi   = (newRes / oldRes) * oldDpi;
 
-      var newSens    = sens * dpiRatio * yawRatio;
-      var newAccel   = accel * dpiRatio * dpiRatio;
-      var newSenscap = senscap * dpiRatio * yawRatio;
-      var cm360      = (360 / (newYaw * newDpi * newSens)) * 2.54;
+        var newSens    = sens * dpiRatio * yawRatio;
+        var newAccel   = accel * dpiRatio * dpiRatio;
+        var newSenscap = senscap * dpiRatio * yawRatio;
+        var cm360      = (360 / (newYaw * newDpi * newSens)) * 2.54;
 
-      var dbtSens    = newSens;
-      var dbtAccel   = newAccel / dbtSens;
-      var dbtSenscap = (senscap * yawRatio * dpiRatio) / dbtSens;
-      var dbtYaw     = newYaw * 60;
+        var dbtSens    = newSens;
+        var dbtAccel   = newAccel / dbtSens;
+        var dbtSenscap = (senscap * yawRatio * dpiRatio) / dbtSens;
+        var dbtYaw     = newYaw * 60;
 
-      document.getElementById('q2d-res-dpi').textContent = resDpi.toFixed(1);
+        document.getElementById('q2d-res-dpi').textContent = resDpi.toFixed(1);
 
-      document.getElementById('q2d-result').innerHTML =
-        '<div class="result-section">' +
-          '<div class="section-label">Quake / QL Settings</div>' +
-          '<b>seta sensitivity</b> <span class="cmd">' + newSens.toFixed(6) + '</span><br>' +
-          '<b>seta cl_mouseSensCap</b> <span class="cmd">' + newSenscap.toFixed(6) + '</span><br>' +
-          '<b>seta cl_mouseAccel</b> <span class="cmd">' + newAccel.toFixed(8) + '</span><br>' +
-          '<b>seta m_yaw</b> <span class="cmd">' + newYaw.toFixed(6) + '</span><br>' +
-          '<b>seta m_pitch</b> <span class="cmd">' + newYaw.toFixed(6) + '</span><br>' +
-          '<b>seta cl_mouseAccelPower</b> <span class="cmd">2</span>' +
-        '</div>' +
-        '<div class="result-section">' +
-          '<div class="section-label">Results</div>' +
-          '<b>cm/360:</b> <span class="cmd">' + cm360.toFixed(2) + '</span>' +
-        '</div>' +
-        '<div class="result-section">' +
-          '<div class="section-label">Diabotical Settings</div>' +
-          '<b>mouse_sensitivity</b> <span class="cmd">' + dbtSens.toFixed(6) + '</span><br>' +
-          '<b>mouse_accel_cap</b> <span class="cmd">' + dbtSenscap.toFixed(6) + '</span><br>' +
-          '<b>mouse_accel_ramp</b> <span class="cmd">' + dbtAccel.toFixed(8) + '</span><br>' +
-          '<b>mouse_accel_post_scale_x</b> <span class="cmd">' + dbtYaw.toFixed(5) + '</span><br>' +
-          '<b>mouse_accel_post_scale_y</b> <span class="cmd">' + dbtYaw.toFixed(5) + '</span>' +
-        '</div>';
-      document.getElementById('q2d-result').classList.add('visible');
-    }
+        document.getElementById('qd-result').innerHTML =
+          '<div class="result-section">' +
+            '<div class="section-label">Results</div>' +
+            '<b>cm/360:</b> <span class="cmd">' + cm360.toFixed(2) + '</span> (' + (cm360 / 2.54).toFixed(2) + ' in)<br>' +
+            '<b>eDPI:</b> <span class="cmd">' + (sens * oldDpi).toFixed(1) + '</span>' +
+          '</div>' +
+          '<div class="result-section">' +
+            '<div class="section-label">Diabotical Settings</div>' +
+            '<b>mouse_sensitivity</b> <span class="cmd">' + dbtSens.toFixed(6) + '</span><br>' +
+            '<b>mouse_accel_cap</b> <span class="cmd">' + dbtSenscap.toFixed(6) + '</span><br>' +
+            '<b>mouse_accel_ramp</b> <span class="cmd">' + dbtAccel.toFixed(8) + '</span><br>' +
+            '<b>mouse_accel_post_scale_x</b> <span class="cmd">' + dbtYaw.toFixed(5) + '</span><br>' +
+            '<b>mouse_accel_post_scale_y</b> <span class="cmd">' + dbtYaw.toFixed(5) + '</span>' +
+          '</div>';
+      } else {
+        var oldDpi      = clamp(document.getElementById('q2d-old-dpi').value, 1600);
+        var newDpi      = clamp(document.getElementById('q2d-new-dpi').value, 1600);
+        var oldRes      = clamp(document.getElementById('q2d-old-res').value, 1080);
+        var newRes      = clamp(document.getElementById('q2d-new-res').value, 1440);
+        var dbtSens     = clamp(document.getElementById('d2q-sens').value, 1.855519);
+        var dbtAccelCap = clamp(document.getElementById('d2q-accelcap').value, 2);
+        var dbtAccel    = clamp(document.getElementById('d2q-accel').value, 0.01);
+        var dbtYaw      = clamp(document.getElementById('d2q-yaw').value, 1.32);
 
-    // ========= DIABOTICAL → QUAKE =========
-    function cm360toDBT2Q() {
-      var cm360El = document.getElementById('d2q-cm360');
-      var cm360 = parseFloat(cm360El.value);
-      if (!isNaN(cm360) && cm360 > 0) {
-        var dpi = clamp(document.getElementById('d2q-dpi').value, 1600);
-        var dbtYaw = clamp(document.getElementById('d2q-yaw').value, 1.32);
-        var dbtSens = 54864 / (dbtYaw * dpi * cm360);
-        document.getElementById('d2q-sens').value = dbtSens.toFixed(6);
+        var dpiRatio = oldDpi / newDpi;
+        var resDpi   = (newRes / oldRes) * oldDpi;
+
+        var quakeSens    = dbtSens * dpiRatio;
+        var quakeAccel   = dbtAccel * dbtSens * dpiRatio * dpiRatio;
+        var quakeSenscap = dbtAccelCap * dbtSens * dpiRatio;
+        var quakeYaw     = dbtYaw / 60;
+        var cm360        = (360 / (quakeYaw * newDpi * quakeSens)) * 2.54;
+
+        document.getElementById('q2d-res-dpi').textContent = resDpi.toFixed(1);
+
+        document.getElementById('qd-result').innerHTML =
+          '<div class="result-section">' +
+            '<div class="section-label">Results</div>' +
+            '<b>cm/360:</b> <span class="cmd">' + cm360.toFixed(2) + '</span> (' + (cm360 / 2.54).toFixed(2) + ' in)<br>' +
+            '<b>eDPI:</b> <span class="cmd">' + (dbtSens * oldDpi).toFixed(1) + '</span>' +
+          '</div>' +
+          '<div class="result-section">' +
+            '<div class="section-label">Quake / QL Settings</div>' +
+            '<b>seta sensitivity</b> <span class="cmd">' + quakeSens.toFixed(6) + '</span><br>' +
+            '<b>seta cl_mouseSensCap</b> <span class="cmd">' + quakeSenscap.toFixed(6) + '</span><br>' +
+            '<b>seta cl_mouseAccel</b> <span class="cmd">' + quakeAccel.toFixed(8) + '</span><br>' +
+            '<b>seta m_yaw</b> <span class="cmd">' + quakeYaw.toFixed(7) + '</span><br>' +
+            '<b>seta m_pitch</b> <span class="cmd">' + quakeYaw.toFixed(7) + '</span><br>' +
+            '<b>seta cl_mouseAccelPower</b> <span class="cmd">2</span>' +
+          '</div>';
       }
-      calcDBT2Q();
-    loadMultiGameData();
-    }
-
-    function calcDBT2Q() {
-      var dbtSens     = clamp(document.getElementById('d2q-sens').value, 1.855519);
-      var dbtAccelCap = clamp(document.getElementById('d2q-accelcap').value, 2);
-      var dbtAccel    = clamp(document.getElementById('d2q-accel').value, 0.01);
-      var dbtYaw      = clamp(document.getElementById('d2q-yaw').value, 1.32);
-      var dpi         = clamp(document.getElementById('d2q-dpi').value, 1600);
-
-      var quakeSens    = dbtSens;
-      var quakeAccel   = dbtAccel * dbtSens;
-      var quakeSenscap = dbtAccelCap * dbtSens;
-      var quakeYaw     = dbtYaw / 60;
-      var cm360        = (360 / (quakeYaw * dpi * quakeSens)) * 2.54;
-
-      document.getElementById('d2q-result').innerHTML =
-        '<div class="result-section">' +
-          '<div class="section-label">Quake / QL Settings</div>' +
-          '<b>seta sensitivity</b> <span class="cmd">' + quakeSens.toFixed(6) + '</span><br>' +
-          '<b>seta cl_mouseSensCap</b> <span class="cmd">' + quakeSenscap.toFixed(6) + '</span><br>' +
-          '<b>seta cl_mouseAccel</b> <span class="cmd">' + quakeAccel.toFixed(8) + '</span><br>' +
-          '<b>seta m_yaw</b> <span class="cmd">' + quakeYaw.toFixed(7) + '</span><br>' +
-          '<b>seta m_pitch</b> <span class="cmd">' + quakeYaw.toFixed(7) + '</span><br>' +
-          '<b>seta cl_mouseAccelPower</b> <span class="cmd">2</span>' +
-        '</div>' +
-        '<div class="result-section">' +
-          '<div class="section-label">Results</div>' +
-          '<b>cm/360:</b> <span class="cmd">' + cm360.toFixed(2) + '</span>' +
-        '</div>';
-      document.getElementById('d2q-result').classList.add('visible');
+      document.getElementById('qd-result').classList.add('visible');
     }
 
     var MG_GAMES_DATA = [{"id":2,"name":"1v1.LOL","slug":"1v1-lol","yawdeg":0.006052164616,"vfov":50.534016,"hfov":80},{"id":3,"name":"7 Days to Die","slug":"7-days-to-die","yawdeg":0.25,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":4,"name":"Aim Gods","slug":"aim-gods","yawdeg":0.0023331,"vfov":72.487,"hfov":105},{"id":5,"name":"Aim Lab","slug":"aim-lab","yawdeg":0.05,"vfov":60,"hfov":91.492845,"fovType":"v"},{"id":1,"name":"Aiming.Pro","slug":"aiming-pro","yawrad":0.001,"vfov":70.5328,"hfov":103},{"id":6,"name":"Aimtastic","slug":"aimtastic","yawdeg":0.022,"vfov":70.53,"hfov":102.997106,"fovType":"v"},{"id":7,"name":"Apex Legends","slug":"apex-legends","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":85,"name":"Arc Raiders","slug":"arc-raiders","yawdeg":0.001360975,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":8,"name":"Arma 3","slug":"arma-3","yawdeg":0.05904385585,"vfov":56.25,"hfov":87.076974},{"id":9,"name":"Battalion 1944","slug":"battalion-1944","yawdeg":0.0175,"vfov":63.09,"hfov":95,"fovType":"h"},{"id":75,"name":"BattleBit Remastered","slug":"battle-bit","yawdeg":0.0005,"vfov":90,"hfov":121.2845,"fovType":"v"},{"id":89,"name":"Battlefield 2042","slug":"battlefield-2042","yawrad":0.04,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":84,"name":"Battlefield 6","slug":"battlefield-6","yawdeg":0.00176303316709834,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":10,"name":"Battlefield V/1/Hardline","slug":"battlefield-v","yawrad":0.04,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":11,"name":"Black Squad","slug":"black-squad","yawdeg":0.005493164063,"vfov":61,"hfov":92.64,"fovType":"v"},{"id":70,"name":"Bloodhunt","slug":"bloodhunt","yawdeg":0.06605940942,"vfov":67.6727,"hfov":100,"fovType":"h"},{"id":12,"name":"Borderlands 1/2","slug":"borderlands","yawdeg":0.005493164063,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":13,"name":"Borderlands 3","slug":"borderlands-3","yawdeg":0.007003891051,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":15,"name":"Call of Duty: Black Ops 4","slug":"call-of-duty-black-ops-4","yawdeg":0.006605686395,"vfov":58.72,"hfov":90},{"id":79,"name":"Call of Duty: Black Ops 6","slug":"call-of-duty-black-ops-6","yawdeg":0.0066,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":18,"name":"Call of Duty: Black Ops Cold War","slug":"call-of-duty-black-ops-cold-war","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":16,"name":"Call of Duty: Modern Warfare","slug":"call-of-duty","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":17,"name":"Call of Duty: Warzone","slug":"call-of-duty-warzone","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":14,"name":"Call of Duty: WWII","slug":"call-of-duty-wwii","yawdeg":0.022,"vfov":51.07719,"hfov":80.69094,"fovType":"h4:3"},{"id":19,"name":"Creative Destruction","slug":"creative-destruction","yawdeg":0.000390625,"vfov":50,"hfov":79.32,"fovType":"v"},{"id":21,"name":"CS 1.6","slug":"cs-16","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h"},{"id":73,"name":"CS2","slug":"cs-2","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":20,"name":"CS:GO","slug":"cs-go","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":22,"name":"Cyberpunk 2077","slug":"cyberpunk","yawdeg":0.01,"vfov":80,"hfov":50.534016},{"id":23,"name":"Darwin Project","slug":"darwin-project","yawdeg":0.00174504843,"vfov":58.72,"hfov":90},{"id":24,"name":"DayZ","slug":"dayz","yawdeg":0.178571428571,"vfov":71.8443,"hfov":104.3462,"fovType":"v"},{"id":78,"name":"Deadlock","slug":"deadlock","yawdeg":0.044,"vfov":46.82645,"hfov":75.17818,"fovType":"h4:3"},{"id":25,"name":"Deep Rock Galactic","slug":"deep-rock-galactic","yawdeg":0.000133667006,"vfov":67.672748,"hfov":100,"fovType":"h"},{"id":88,"name":"Delta Force","slug":"delta-force","yawdeg":0.01,"vfov":58.715507,"hfov":90,"fovType":"h"},{"id":91,"name":"Diabotical","slug":"diabotical","yawdeg":0.022,"vfov":103,"hfov":131.789393,"fovType":"v"},{"id":26,"name":"Destiny 2","slug":"destiny-2","yawdeg":0.0066,"vfov":51.8,"hfov":81.6},{"id":27,"name":"Doom Eternal","slug":"doom-eternal","yawdeg":0.022,"vfov":58.715507,"hfov":90},{"id":28,"name":"Dying Light","slug":"dying-light","yawdeg":0.008333333333,"vfov":52,"hfov":81.85582,"fovType":"v"},{"id":90,"name":"Echo Point Nova","slug":"echo-point-nova","yawdeg":0.00093324,"vfov":88.507155,"hfov":120,"fovType":"h"},{"id":29,"name":"Escape from Tarkov","slug":"escape-from-tarkov","yawdeg":0.125,"vfov":50,"hfov":79.316879,"fovType":"v"},{"id":30,"name":"Fallout 4","slug":"fallout-4","yawdeg":3.78,"vfov":50.53402,"hfov":80},{"id":31,"name":"Far Cry 3","slug":"far-cry-3","yawdeg":0.18,"vfov":58.19,"hfov":89.38,"fovType":"h4:3"},{"id":32,"name":"Far Cry 4","slug":"far-cry-4","yawdeg":0.036,"vfov":47,"hfov":75},{"id":34,"name":"Far Cry 5","slug":"far-cry","yawdeg":0.022,"vfov":46.69,"hfov":75},{"id":33,"name":"Far Cry Primal","slug":"far-cry-primal","yawdeg":0.053820025834,"vfov":47,"hfov":75},{"id":35,"name":"Fortnite","slug":"fortnite","yawdeg":0.005555,"vfov":56,"hfov":80},{"id":36,"name":"Garry's Mod","slug":"garrys-mod","yawdeg":0.022,"vfov":73.7398,"hfov":106.2602,"fovType":"h4:3"},{"id":37,"name":"Gears 5","slug":"gears","yawdeg":0.012438884908,"vfov":50.53,"hfov":80},{"id":38,"name":"Halo","slug":"halo","yawdeg":0.022222222222,"vfov":49.2,"hfov":78.28,"fovType":"h4:3"},{"id":71,"name":"Halo Infinite","slug":"halo-infinite","yawdeg":0.0225,"vfov":49.1491,"hfov":78.2205},{"id":39,"name":"Heroes & Generals","slug":"heroes-generals","yawdeg":0.151260504202,"vfov":60,"hfov":91.49,"fovType":"v"},{"id":40,"name":"Hunt: Showdown","slug":"hunt-showdown","yawdeg":0.042971834634811745,"yawrad":0.00075,"vfov":55,"hfov":85.56559,"fovType":"v"},{"id":41,"name":"Hyperscape","slug":"hyperscape","yawdeg":0.005729577951308232,"yawrad":0.0001,"vfov":65,"hfov":97.114332,"fovType":"v"},{"id":42,"name":"Insurgency","slug":"insurgency","yawdeg":0.022,"vfov":73.739795,"hfov":106.260205,"fovType":"h4:3"},{"id":43,"name":"Insurgency: Sandstorm","slug":"insurgency-sandstorm","yawdeg":0.14,"vfov":73.7398,"hfov":106.2602,"fovType":"h4:3"},{"id":69,"name":"Ironsight","slug":"ironsight","yawdeg":0.01,"vfov":60,"hfov":91.49284,"fovType":"h"},{"id":44,"name":"Krunker","slug":"krunker","yawdeg":0.137509549274,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":45,"name":"Line of Sight","slug":"line-of-sight","yawdeg":0.005493164063,"vfov":49.2,"hfov":78.28,"fovType":"h"},{"id":86,"name":"Marathon","slug":"marathon","yawdeg":0.0033,"vfov":58.715507,"hfov":90,"fovType":"h"},{"id":82,"name":"Marvel Rivals","slug":"marvel-rivals","yawdeg":0.0175,"vfov":58.51551,"hfov":90},{"id":46,"name":"Minecraft Java Edition","slug":"minecraft","vfov":70,"hfov":102.45,"fovType":"v"},{"id":47,"name":"Overwatch","slug":"overwatch","yawdeg":0.0066,"vfov":70.53,"hfov":103},{"id":72,"name":"Overwatch 2","slug":"overwatch-2","yawdeg":0.0066,"vfov":70.53,"hfov":103},{"id":48,"name":"Paladins","slug":"paladins","yawdeg":0.009155273438,"vfov":67.67,"hfov":100,"fovType":"h"},{"id":49,"name":"Payday 2","slug":"payday-2","yawdeg":0.15,"vfov":51.08,"hfov":80.69,"fovType":"h4:3"},{"id":81,"name":"Payday 3","slug":"payday-3","yawdeg":0.07,"vfov":60,"hfov":91.49284},{"id":50,"name":"PUBG","slug":"player-unknown-battlegrounds","yawdeg":2.222,"vfov":59,"hfov":90},{"id":51,"name":"Quake Live","slug":"quake-live","yawdeg":0.022,"vfov":83.58,"hfov":115.63,"fovType":"h4:3"},{"id":52,"name":"Realm Royale","slug":"realm-royale","yawdeg":0.009155273438,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":53,"name":"Ring of Elysium","slug":"ring-of-elysium","yawdeg":2.222,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":54,"name":"Roblox","slug":"roblox","yawdeg":0.39789557451,"vfov":80,"hfov":112.327252,"fovType":"v"},{"id":55,"name":"Rogue Company","slug":"rogue-company","yawdeg":0.0227289,"vfov":42,"hfov":68.621206},{"id":56,"name":"Rust","slug":"rust","yawdeg":0.1125,"vfov":75,"hfov":107.51,"fovType":"v"},{"id":87,"name":"s&box","slug":"sandbox","yawdeg":0.0078125,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":80,"name":"Spectre Divide","slug":"spectre-divide","yawdeg":0.0715206,"vfov":70.53,"hfov":103,"fovType":"h"},{"id":68,"name":"Splitgate","slug":"splitgate","yawdeg":0.93740625,"vfov":58.71551,"hfov":90},{"id":83,"name":"Splitgate 2","slug":"splitgate-2","yawdeg":0.011172707756232688,"vfov":58.7155,"hfov":90,"fovType":"h"},{"id":57,"name":"Squad","slug":"squad","yawdeg":0.1749825,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":58,"name":"Team Fortress 2","slug":"team-fortress-2","yawdeg":0.022,"vfov":59.84,"hfov":91.31,"fovType":"h4:3"},{"id":74,"name":"THE FINALS","slug":"the-finals","yawdeg":0.000790322,"vfov":71,"hfov":103.4817,"fovType":"v"},{"id":59,"name":"Titanfall 2","slug":"titanfall-2","yawdeg":0.022,"vfov":55.41,"hfov":86.07},{"id":60,"name":"Tom Clancy's Rainbow 6: Siege","slug":"rainbow-6-siege","yawdeg":0.005729577951308232,"yawrad":0.0001,"vfov":60,"hfov":91.49,"fovType":"v"},{"id":61,"name":"Tom Clancy's The Division 2","slug":"the-division-2","yawdeg":0.0044691,"vfov":43,"hfov":70.01,"fovType":"v"},{"id":62,"name":"Unturned","slug":"unturned","yawdeg":0.1,"vfov":90,"hfov":121.28,"fovType":"v"},{"id":63,"name":"Valheim","slug":"valheim","yawdeg":0.05,"vfov":65,"hfov":97.114332,"fovType":"v"},{"id":64,"name":"Valorant","slug":"valorant","yawdeg":0.07,"vfov":70.53,"hfov":103},{"id":65,"name":"Warface","slug":"warface","yawdeg":0.00333000333,"vfov":59.84,"hfov":91.31,"fovType":"h4:3"},{"id":66,"name":"Warframe","slug":"warframe","yawdeg":0.007566132006,"vfov":65,"hfov":97.11,"fovType":"v"},{"id":77,"name":"XDefiant","slug":"xdefiant","yawdeg":0.00170729845,"vfov":67.67,"hfov":100,"fovType":"h"},{"id":76,"name":"Xonotic","slug":"xonotic","yawdeg":0.022,"vfov":83.58166,"hfov":115.6336,"fovType":"h4:3"},{"id":67,"name":"Zula","slug":"zula","yawdeg":0.12012012012,"vfov":62,"hfov":93.777,"fovType":"v"},{"id":92,"name":"GTFO","slug":"gtfo","yawdeg":0.15},{"id":93,"name":"Ready or Not","slug":"ready-or-not","yawdeg":0.175},{"id":94,"name":"Fate Trigger","slug":"fate-trigger","yawdeg":0.0000875},{"id":95,"name":"ELDEN RING NIGHTREIGN","slug":"elden-ring-nightreign","yawdeg":0.00971429},{"id":96,"name":"The Last of Us Part II","slug":"the-last-of-us-part-ii","yawdeg":0.003},{"id":97,"name":"BuildNow GG","slug":"buildnow-gg","yawdeg":0.003},{"id":98,"name":"PANICORE","slug":"panicore","yawdeg":0.175},{"id":99,"name":"Metal Gear Solid Δ: Snake Eater","slug":"metal-gear-solid-snake-eater","yawdeg":0.021},{"id":100,"name":"DOOM: The Dark Ages","slug":"doom-the-dark-ages","yawdeg":0.022},{"id":101,"name":"DEADSHOT.io","slug":"deadshot-io","yawdeg":0.0716197407285855},{"id":102,"name":"Suit for Hire","slug":"suit-for-hire","yawdeg":0.14},{"id":103,"name":"KovaaK's","slug":"kovaak-s","yawdeg":0.021999999874285716},{"id":104,"name":"STRAFTAT","slug":"straftat","yawdeg":0.10000000000000002},{"id":105,"name":"Battle Teams 2","slug":"battle-teams-2","yawdeg":0.05},{"id":106,"name":"Just Cause 4","slug":"just-cause-4","yawdeg":0.0004774648958333334},{"id":107,"name":"Arena Breakout: Infinite","slug":"arena-breakout-infinite","yawdeg":0.10237450588235296},{"id":108,"name":"Just Cause 3","slug":"just-cause-3","yawdeg":0.014651711475409838},{"id":109,"name":"Just Cause 2","slug":"just-cause-2","yawdeg":0.0026857404651162795},{"id":110,"name":"Black Mesa","slug":"black-mesa","yawdeg":0.022},{"id":111,"name":"Mini Royale","slug":"mini-royale","yawdeg":0.09625},{"id":112,"name":"Schedule I","slug":"schedule-i","yawdeg":0.0016666666666666668},{"id":113,"name":"The First Berserker: Khazan","slug":"the-first-berserker-khazan","yawdeg":0.0024},{"id":114,"name":"Monster Hunter Wilds","slug":"monster-hunter-wilds","yawdeg":0.006960816595324334},{"id":115,"name":"Mecha BREAK","slug":"mecha-break","yawdeg":0.08333333333333334},{"id":116,"name":"Pixel Strike 3D","slug":"pixel-strike-3d","yawdeg":0.03906248500000001},{"id":117,"name":"MiSide","slug":"miside","yawdeg":0.0030000000000000005},{"id":118,"name":"Kingdom Come: Deliverance II","slug":"kingdom-come-deliverance-ii","yawdeg":0.01775999166666667},{"id":119,"name":"ALARA Prime","slug":"alara-prime","yawdeg":0.20855690168818275},{"id":120,"name":"Beyond Citadel","slug":"beyond-citadel","yawdeg":0.175},{"id":121,"name":"Kingdom Come: Deliverance","slug":"kingdom-come-deliverance","yawdeg":0.01775999166666667},{"id":122,"name":"Risk of Rain 2","slug":"risk-of-rain-2","yawdeg":0.5},{"id":123,"name":"Redmatch 2","slug":"redmatch-2","yawdeg":0.05},{"id":124,"name":"Blood Strike","slug":"blood-strike","yawdeg":0.0014323944444444444},{"id":125,"name":"Roboquest","slug":"roboquest","yawdeg":0.000427735140562249},{"id":126,"name":"Caliber","slug":"caliber","yawdeg":0.00125},{"id":127,"name":"Dark and Darker","slug":"dark-and-darker","yawdeg":0.17498250174982502},{"id":128,"name":"Warlander","slug":"warlander","yawdeg":0.08333333333333334},{"id":129,"name":"Pixel Gun 3D: PC Edition","slug":"pixel-gun-3d-pc-edition","yawdeg":0.0038684210526315796},{"id":130,"name":"Stumble Guys","slug":"stumble-guys","yawdeg":0.07875000000000001},{"id":131,"name":"Black Myth: Wukong","slug":"black-myth-wukong","yawdeg":0.01429166666666667},{"id":132,"name":"Silent Hill 2","slug":"silent-hill-2","yawdeg":0.37329600000000007},{"id":133,"name":"FragPunk","slug":"fragpunk","yawdeg":0.05555002564102565},{"id":134,"name":"Smite 2","slug":"smite-2","yawdeg":0.007324216666666667},{"id":135,"name":"Bodycam","slug":"bodycam","yawdeg":0.1225},{"id":136,"name":"Concord","slug":"concord","yawdeg":0.07},{"id":137,"name":"Dungeonborne","slug":"dungeonborne","yawdeg":0.0014},{"id":138,"name":"Strinova","slug":"strinova","yawdeg":0.01388194445795501},{"id":139,"name":"Chained Together","slug":"chained-together","yawdeg":0.175},{"id":140,"name":"Bloxd.io","slug":"bloxd-io","yawdeg":0.006600000585989576},{"id":141,"name":"ULTRAKILL","slug":"ultrakill","yawdeg":0.005},{"id":142,"name":"Gray Zone Warfare","slug":"gray-zone-warfare","yawdeg":0.0630000001575},{"id":143,"name":"3D Aim Trainer","slug":"3d-aim-trainer","yawdeg":0.006603773},{"id":144,"name":"ARK: Survival Evolved","slug":"ark-survival-evolved","yawdeg":0.17498152972},{"id":145,"name":"ARK: Survival Ascended","slug":"ark-survival-ascended","yawdeg":0.007},{"id":146,"name":"Back 4 Blood","slug":"back-4-blood","yawdeg":0.00233309976},{"id":147,"name":"Battlefield 4","slug":"battlefield-4","yawdeg":0.004153944375},{"id":148,"name":"BlackShot: Mercenary Warfare FPS","slug":"blackshot-mercenary-warfare-fps","yawdeg":0.00035},{"id":149,"name":"CrossFire","slug":"crossfire","yawdeg":0.004083333},{"id":150,"name":"Combat Master","slug":"combat-master","yawdeg":0.001},{"id":151,"name":"Enlisted","slug":"enlisted","yawdeg":0.05384615384615385},{"id":152,"name":"Fallout 76","slug":"fallout-76","yawdeg":3.77992440151},{"id":153,"name":"Farlight 84","slug":"farlight-84","yawdeg":0.022072},{"id":154,"name":"Half-Life 2","slug":"half-life-2","yawdeg":0.02199999511},{"id":155,"name":"Left 4 Dead 2","slug":"left-4-dead-2","yawdeg":0.02199999511},{"id":156,"name":"Lethal Company","slug":"lethal-company","yawdeg":0.008166666667},{"id":157,"name":"Lost Light","slug":"lost-light","yawdeg":0.001590909090909091},{"id":158,"name":"My Hero Ultra Rumble","slug":"my-hero-ultra-rumble","yawdeg":0.0006222222222222224},{"id":159,"name":"Naraka Bladepoint","slug":"naraka-bladepoint","yawdeg":0.004083333333333334},{"id":160,"name":"New World","slug":"new-world","yawdeg":1},{"id":161,"name":"osu!","slug":"osu","yawdeg":0.0796},{"id":162,"name":"Point Blank","slug":"point-blank","yawdeg":0.2916666667},{"id":163,"name":"Quake Champions","slug":"quake-champions","yawdeg":0.02199999511},{"id":164,"name":"Serious Sam 2","slug":"serious-sam-2","yawdeg":0.1718876066},{"id":165,"name":"Serious Sam 3","slug":"serious-sam-3","yawdeg":0.1718876066},{"id":166,"name":"Serious Sam 4","slug":"serious-sam-4","yawdeg":0.175},{"id":167,"name":"Serious Sam Classics: Revolution","slug":"serious-sam-classics-revolution","yawdeg":0.25},{"id":168,"name":"Spellbreak","slug":"spellbreak","yawdeg":0.008},{"id":169,"name":"Stalcraft","slug":"stalcraft","yawdeg":0.006600000377142879},{"id":170,"name":"State of Decay 2","slug":"state-of-decay-2","yawdeg":0.014000000000000002},{"id":171,"name":"Tom Clancy's Rainbow 6 Extraction","slug":"tom-clancy-s-rainbow-6-extraction","yawdeg":0.00572957914},{"id":172,"name":"War Rock","slug":"war-rock","yawdeg":0.0025},{"id":173,"name":"World of Tanks","slug":"world-of-tanks","yawdeg":0.14323967212731376},{"id":174,"name":"World of Tanks Blitz","slug":"world-of-tanks-blitz","yawdeg":0.0007865168539325844}];
@@ -590,7 +601,9 @@
         sensEl.value = srcSens.toFixed(6);
         _mgUpdating = false;
         document.getElementById('mg-target-sens').textContent = targetSens.toFixed(6);
+        document.getElementById('mg-edpi').textContent = (targetSens * dpi).toFixed(1);
         document.getElementById('mg-cm360').textContent = cm360.toFixed(2) + ' cm';
+        document.getElementById('mg-in360').textContent = (cm360 / 2.54).toFixed(2) + ' in';
       } else if (!isNaN(sens) && sens > 0) {
         cm360 = 914.4 / (sens * dpi * src.yawdeg);
         var targetSens = 914.4 / (cm360 * dpi * tgt.yawdeg);
@@ -598,7 +611,9 @@
         cm360el.value = cm360.toFixed(2);
         _mgUpdating = false;
         document.getElementById('mg-target-sens').textContent = targetSens.toFixed(6);
+        document.getElementById('mg-edpi').textContent = (targetSens * dpi).toFixed(1);
         document.getElementById('mg-cm360').textContent = cm360.toFixed(2) + ' cm';
+        document.getElementById('mg-in360').textContent = (cm360 / 2.54).toFixed(2) + ' in';
       } else {
         clearMgResults(src, tgt);
         return;
@@ -618,6 +633,17 @@
         document.getElementById('mg-target-fov').textContent = '--';
       }
 
+      var quickDpis = [400, 800, 1600];
+      var quickRefHtml = '';
+      for (var i = 0; i < quickDpis.length; i++) {
+        var qDpi = quickDpis[i];
+        var qSrcSens = 914.4 / (cm360 * qDpi * src.yawdeg);
+        var qTgtSens = 914.4 / (cm360 * qDpi * tgt.yawdeg);
+        quickRefHtml += '<b>' + qDpi + ' DPI:</b> <span class="cmd">' + qSrcSens.toFixed(4) + '</span> &rarr; <span class="cmd">' + qTgtSens.toFixed(4) + '</span><br>';
+      }
+      document.getElementById('mg-quickref').innerHTML = quickRefHtml;
+      document.getElementById('mg-quickref-section').classList.add('visible');
+
       document.getElementById('mg-target-sens-section').classList.add('visible');
       document.getElementById('mg-result').classList.add('visible');
       document.getElementById('mg-target-sens-section').style.borderLeftColor = 'var(--accent-green)';
@@ -625,18 +651,29 @@
 
     function clearMgResults(src, tgt) {
       document.getElementById('mg-target-sens').textContent = '--';
+      document.getElementById('mg-edpi').textContent = '--';
       document.getElementById('mg-cm360').textContent = '--';
+      document.getElementById('mg-in360').textContent = '--';
       document.getElementById('mg-target-fov').textContent = '--';
+      document.getElementById('mg-quickref').innerHTML = '--';
       document.getElementById('mg-source-info').innerHTML = 'yawdeg: <span class="cmd">--</span><br>VFOV: <span class="cmd">--</span><br>HFOV: <span class="cmd">--</span>';
       document.getElementById('mg-target-info').innerHTML = 'yawdeg: <span class="cmd">--</span><br>VFOV: <span class="cmd">--</span><br>HFOV: <span class="cmd">--</span>';
       document.getElementById('mg-source-name').textContent = src ? src.name : 'Source';
       document.getElementById('mg-target-name').textContent = tgt ? tgt.name : 'Target';
     }
 
+    function swapMg() {
+      var srcSel = document.getElementById('mg-source-game');
+      var tgtSel = document.getElementById('mg-target-game');
+      var tmp = srcSel.value;
+      srcSel.value = tgtSel.value;
+      tgtSel.value = tmp;
+      calcMultiGame();
+    }
+
     // initial calculations on page load
     calcFov();
-    calcQ2DBT();
-    calcDBT2Q();
+    calcQD();
     loadMultiGameData();
   </script>
 
