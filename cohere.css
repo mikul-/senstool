@@ -306,6 +306,29 @@ header a:hover { color: var(--text); }
 .form-group select { text-align: left; cursor: pointer; }
 .form-group select.game-select { width: 200px; }
 
+.input-with-select {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.input-with-select input { width: 70px !important; }
+
+select.yaw-preset {
+  width: 115px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+  color: var(--text-dim);
+  padding: 6px 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+select.yaw-preset:focus { border-color: var(--blue); }
+
 /* ── Buttons ─────────────────────────────────────────── */
 .btn {
   font-family: var(--font-body);
@@ -708,6 +731,19 @@ footer a:hover { color: var(--text); }
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+
+.spectrum-slider.fov-slider {
+  background: linear-gradient(to right, var(--blue), var(--coral));
+}
+
+.fov-info-line {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.fov-info-line span { color: var(--accent-green); }
 
 /* ── Mousepad visualizer ─────────────────────────────── */
 .pad-visual { }

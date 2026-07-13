@@ -55,9 +55,17 @@
           <label>Original FOV</label>
           <input type="number" id="fov-original" value="115" step="any" oninput="calcFov()">
         </div>
+        <div class="spectrum-slider-wrap">
+          <input type="range" class="spectrum-slider fov-slider" id="fov-original-slider" min="30" max="160" step="0.5" value="115" oninput="document.getElementById('fov-original').value=parseFloat(this.value).toFixed(1); calcFov()">
+          <div class="spectrum-slider-labels"><span>30&deg;</span><span>160&deg;</span></div>
+        </div>
         <div class="form-group">
           <label>New / Zoom FOV</label>
           <input type="number" id="fov-zoom" value="100" step="any" oninput="calcFov()">
+        </div>
+        <div class="spectrum-slider-wrap">
+          <input type="range" class="spectrum-slider fov-slider" id="fov-zoom-slider" min="30" max="160" step="0.5" value="100" oninput="document.getElementById('fov-zoom').value=parseFloat(this.value).toFixed(1); calcFov()">
+          <div class="spectrum-slider-labels"><span>30&deg;</span><span>160&deg;</span></div>
         </div>
         <div class="form-group">
           <label>
@@ -124,10 +132,6 @@
       <div class="card" id="qd-res-card">
         <div class="card-title">Resolution &amp; DPI Scaling</div>
         <div class="form-group">
-          <label>Old DPI</label>
-          <input type="number" id="q2d-old-dpi" value="1600" step="any" oninput="cm360toQD()">
-        </div>
-        <div class="form-group">
           <label>Old resolution</label>
           <div class="res-tag-row" id="old-res-tags">
             <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',480)">480</button>
@@ -166,6 +170,10 @@
           </div>
         </div>
         <div class="form-group">
+          <label>Old DPI</label>
+          <input type="number" id="q2d-old-dpi" value="1600" step="any" oninput="cm360toQD()">
+        </div>
+        <div class="form-group">
           <label>New DPI <button class="btn btn-sm btn-secondary" style="margin-left:6px;font-size:10px;padding:1px 6px;" onclick="document.getElementById('q2d-new-dpi').value=document.getElementById('q2d-old-dpi').value; calcQD();">reset</button></label>
           <input type="number" id="q2d-new-dpi" value="1600" step="any" oninput="calcQD()">
         </div>
@@ -186,23 +194,33 @@
           <input type="number" id="q2d-sens" value="1.855519" step="any" oninput="document.getElementById('qd-cm360').value=''; calcQD()">
         </div>
         <div class="form-group">
-          <label>SensCap</label>
-          <input type="number" id="q2d-senscap" value="2.5" step="any" oninput="calcQD()">
+          <label>Sens cap</label>
+          <input type="number" id="q2d-senscap" value="3.711038" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
-          <label>Accel (cl_mouseAccel)</label>
-          <input type="number" id="q2d-accel" value="0.01" step="any" oninput="calcQD()">
+          <label>Acceleration</label>
+          <input type="number" id="q2d-accel" value="0.01855519" step="any" oninput="calcQD()">
         </div>
         <div class="form-group">
           <label>Yaw / Pitch (m_yaw)</label>
-          <input type="number" id="q2d-yaw" value="0.022" step="any" oninput="cm360toQD()">
+          <div class="input-with-select">
+            <select id="q2d-yaw-game" class="yaw-preset" onchange="var v=parseFloat(this.value); if(!isNaN(v)){document.getElementById('q2d-yaw').value=v; cm360toQD();}">
+              <option value="">preset…</option>
+            </select>
+            <input type="number" id="q2d-yaw" value="0.022" step="any" oninput="cm360toQD()">
+          </div>
         </div>
         <div class="form-group">
           <label>
             Desired yaw / pitch
             <span class="hint">0.022 for Quake, 0.01666667 for DBT preset</span>
           </label>
-          <input type="number" id="q2d-new-yaw" value="0.022" step="any" oninput="calcQD()">
+          <div class="input-with-select">
+            <select id="q2d-new-yaw-game" class="yaw-preset" onchange="var v=parseFloat(this.value); if(!isNaN(v)){document.getElementById('q2d-new-yaw').value=v; calcQD();}">
+              <option value="">preset…</option>
+            </select>
+            <input type="number" id="q2d-new-yaw" value="0.022" step="any" oninput="calcQD()">
+          </div>
         </div>
       </div>
 
@@ -225,7 +243,12 @@
             mouse_accel_post_scale_x
             <span class="hint">Default 1, Quake default equiv: 1.32</span>
           </label>
-          <input type="number" id="d2q-yaw" value="1.32" step="any" oninput="cm360toQD()">
+          <div class="input-with-select">
+            <select id="d2q-yaw-game" class="yaw-preset" onchange="var v=parseFloat(this.value); if(!isNaN(v)){document.getElementById('d2q-yaw').value=(v*60).toFixed(6); cm360toQD();}">
+              <option value="">preset…</option>
+            </select>
+            <input type="number" id="d2q-yaw" value="1.32" step="any" oninput="cm360toQD()">
+          </div>
         </div>
       </div>
 
@@ -245,10 +268,6 @@
           <input type="number" id="mg-dpi" value="1600" step="any" oninput="calcMultiGame()">
         </div>
         <div class="form-group">
-          <label>FOV</label>
-          <input type="number" id="mg-source-fov" value="133" step="any" oninput="calcMultiGame()">
-        </div>
-        <div class="form-group">
           <label>cm/360</label>
           <input type="number" id="mg-cm360-input" value="" step="any" oninput="mgCm360Input()">
         </div>
@@ -260,6 +279,16 @@
           <label>Sensitivity</label>
           <input type="number" id="mg-source-sens" value="1.855519" step="any" oninput="mgSensInput()">
         </div>
+        <div class="form-group">
+          <label>FOV</label>
+          <input type="number" id="mg-source-fov" value="133" step="any" oninput="calcMultiGame()">
+        </div>
+        <div class="spectrum-slider-wrap">
+          <input type="range" class="spectrum-slider fov-slider" id="mg-fov-slider" min="30" max="160" step="0.5" value="133" oninput="document.getElementById('mg-source-fov').value=parseFloat(this.value).toFixed(1); calcMultiGame()">
+          <div class="spectrum-slider-labels"><span>30&deg;</span><span>160&deg;</span></div>
+          <div id="mg-source-fov-info" class="fov-info-line" style="margin-top:3px"></div>
+        </div>
+        <div class="fov-cone-container" id="mg-fov-cone-container" style="margin-top: 8px;"></div>
         <div class="fov-results" style="margin-top: 0.5rem;">
           <div class="fov-result-card">
             <div class="fov-label" id="mg-source-name">Source</div>
@@ -357,6 +386,13 @@
       }
     }
 
+    function syncFovSlider(inputId, sliderId) {
+      var v = parseFloat(document.getElementById(inputId).value);
+      if (!isNaN(v) && v >= 30 && v <= 160) {
+        document.getElementById(sliderId).value = v;
+      }
+    }
+
     function syncResTags(inputId, rowId) {
       var val = parseInt(document.getElementById(inputId).value);
       var row = document.getElementById(rowId);
@@ -439,6 +475,9 @@
       var newAccel = zoomSens(accel, fov, zoomFov, fovType);
       var orig = fovConvert(fov, fovType);
       var zoom = fovConvert(zoomFov, fovType);
+
+      syncFovSlider('fov-original', 'fov-original-slider');
+      syncFovSlider('fov-zoom', 'fov-zoom-slider');
 
       var dpi = clamp(document.getElementById('fov-dpi').value, 1600);
       document.getElementById('fov-sens-out').textContent = newSens.toFixed(6);
@@ -628,7 +667,7 @@
       document.getElementById('qd-result').classList.add('visible');
     }
 
-    var MG_GAMES_DATA = [{"id":2,"name":"1v1.LOL","slug":"1v1-lol","yawdeg":0.006052164616,"vfov":50.534016,"hfov":80},{"id":3,"name":"7 Days to Die","slug":"7-days-to-die","yawdeg":0.25,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":4,"name":"Aim Gods","slug":"aim-gods","yawdeg":0.0023331,"vfov":72.487,"hfov":105},{"id":5,"name":"Aim Lab","slug":"aim-lab","yawdeg":0.05,"vfov":60,"hfov":91.492845,"fovType":"v"},{"id":1,"name":"Aiming.Pro","slug":"aiming-pro","yawrad":0.001,"vfov":70.5328,"hfov":103},{"id":6,"name":"Aimtastic","slug":"aimtastic","yawdeg":0.022,"vfov":70.53,"hfov":102.997106,"fovType":"v"},{"id":7,"name":"Apex Legends","slug":"apex-legends","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":85,"name":"Arc Raiders","slug":"arc-raiders","yawdeg":0.001360975,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":8,"name":"Arma 3","slug":"arma-3","yawdeg":0.05904385585,"vfov":56.25,"hfov":87.076974},{"id":9,"name":"Battalion 1944","slug":"battalion-1944","yawdeg":0.0175,"vfov":63.09,"hfov":95,"fovType":"h"},{"id":75,"name":"BattleBit Remastered","slug":"battle-bit","yawdeg":0.0005,"vfov":90,"hfov":121.2845,"fovType":"v"},{"id":89,"name":"Battlefield 2042","slug":"battlefield-2042","yawrad":0.04,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":84,"name":"Battlefield 6","slug":"battlefield-6","yawdeg":0.00176303316709834,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":10,"name":"Battlefield V/1/Hardline","slug":"battlefield-v","yawrad":0.04,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":11,"name":"Black Squad","slug":"black-squad","yawdeg":0.005493164063,"vfov":61,"hfov":92.64,"fovType":"v"},{"id":70,"name":"Bloodhunt","slug":"bloodhunt","yawdeg":0.06605940942,"vfov":67.6727,"hfov":100,"fovType":"h"},{"id":12,"name":"Borderlands 1/2","slug":"borderlands","yawdeg":0.005493164063,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":13,"name":"Borderlands 3","slug":"borderlands-3","yawdeg":0.007003891051,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":15,"name":"Call of Duty: Black Ops 4","slug":"call-of-duty-black-ops-4","yawdeg":0.006605686395,"vfov":58.72,"hfov":90},{"id":79,"name":"Call of Duty: Black Ops 6","slug":"call-of-duty-black-ops-6","yawdeg":0.0066,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":18,"name":"Call of Duty: Black Ops Cold War","slug":"call-of-duty-black-ops-cold-war","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":16,"name":"Call of Duty: Modern Warfare","slug":"call-of-duty","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":17,"name":"Call of Duty: Warzone","slug":"call-of-duty-warzone","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":14,"name":"Call of Duty: WWII","slug":"call-of-duty-wwii","yawdeg":0.022,"vfov":51.07719,"hfov":80.69094,"fovType":"h4:3"},{"id":19,"name":"Creative Destruction","slug":"creative-destruction","yawdeg":0.000390625,"vfov":50,"hfov":79.32,"fovType":"v"},{"id":21,"name":"CS 1.6","slug":"cs-16","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h"},{"id":73,"name":"CS2","slug":"cs-2","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":20,"name":"CS:GO","slug":"cs-go","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":22,"name":"Cyberpunk 2077","slug":"cyberpunk","yawdeg":0.01,"vfov":80,"hfov":50.534016},{"id":23,"name":"Darwin Project","slug":"darwin-project","yawdeg":0.00174504843,"vfov":58.72,"hfov":90},{"id":24,"name":"DayZ","slug":"dayz","yawdeg":0.178571428571,"vfov":71.8443,"hfov":104.3462,"fovType":"v"},{"id":78,"name":"Deadlock","slug":"deadlock","yawdeg":0.044,"vfov":46.82645,"hfov":75.17818,"fovType":"h4:3"},{"id":25,"name":"Deep Rock Galactic","slug":"deep-rock-galactic","yawdeg":0.000133667006,"vfov":67.672748,"hfov":100,"fovType":"h"},{"id":88,"name":"Delta Force","slug":"delta-force","yawdeg":0.01,"vfov":58.715507,"hfov":90,"fovType":"h"},{"id":91,"name":"Diabotical","slug":"diabotical","yawdeg":0.022,"vfov":103,"hfov":131.789393,"fovType":"v"},{"id":26,"name":"Destiny 2","slug":"destiny-2","yawdeg":0.0066,"vfov":51.8,"hfov":81.6},{"id":27,"name":"Doom Eternal","slug":"doom-eternal","yawdeg":0.022,"vfov":58.715507,"hfov":90},{"id":28,"name":"Dying Light","slug":"dying-light","yawdeg":0.008333333333,"vfov":52,"hfov":81.85582,"fovType":"v"},{"id":90,"name":"Echo Point Nova","slug":"echo-point-nova","yawdeg":0.00093324,"vfov":88.507155,"hfov":120,"fovType":"h"},{"id":29,"name":"Escape from Tarkov","slug":"escape-from-tarkov","yawdeg":0.125,"vfov":50,"hfov":79.316879,"fovType":"v"},{"id":30,"name":"Fallout 4","slug":"fallout-4","yawdeg":3.78,"vfov":50.53402,"hfov":80},{"id":31,"name":"Far Cry 3","slug":"far-cry-3","yawdeg":0.18,"vfov":58.19,"hfov":89.38,"fovType":"h4:3"},{"id":32,"name":"Far Cry 4","slug":"far-cry-4","yawdeg":0.036,"vfov":47,"hfov":75},{"id":34,"name":"Far Cry 5","slug":"far-cry","yawdeg":0.022,"vfov":46.69,"hfov":75},{"id":33,"name":"Far Cry Primal","slug":"far-cry-primal","yawdeg":0.053820025834,"vfov":47,"hfov":75},{"id":35,"name":"Fortnite","slug":"fortnite","yawdeg":0.005555,"vfov":56,"hfov":80},{"id":36,"name":"Garry's Mod","slug":"garrys-mod","yawdeg":0.022,"vfov":73.7398,"hfov":106.2602,"fovType":"h4:3"},{"id":37,"name":"Gears 5","slug":"gears","yawdeg":0.012438884908,"vfov":50.53,"hfov":80},{"id":38,"name":"Halo","slug":"halo","yawdeg":0.022222222222,"vfov":49.2,"hfov":78.28,"fovType":"h4:3"},{"id":71,"name":"Halo Infinite","slug":"halo-infinite","yawdeg":0.0225,"vfov":49.1491,"hfov":78.2205},{"id":39,"name":"Heroes & Generals","slug":"heroes-generals","yawdeg":0.151260504202,"vfov":60,"hfov":91.49,"fovType":"v"},{"id":40,"name":"Hunt: Showdown","slug":"hunt-showdown","yawdeg":0.042971834634811745,"yawrad":0.00075,"vfov":55,"hfov":85.56559,"fovType":"v"},{"id":41,"name":"Hyperscape","slug":"hyperscape","yawdeg":0.005729577951308232,"yawrad":0.0001,"vfov":65,"hfov":97.114332,"fovType":"v"},{"id":42,"name":"Insurgency","slug":"insurgency","yawdeg":0.022,"vfov":73.739795,"hfov":106.260205,"fovType":"h4:3"},{"id":43,"name":"Insurgency: Sandstorm","slug":"insurgency-sandstorm","yawdeg":0.14,"vfov":73.7398,"hfov":106.2602,"fovType":"h4:3"},{"id":69,"name":"Ironsight","slug":"ironsight","yawdeg":0.01,"vfov":60,"hfov":91.49284,"fovType":"h"},{"id":44,"name":"Krunker","slug":"krunker","yawdeg":0.137509549274,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":45,"name":"Line of Sight","slug":"line-of-sight","yawdeg":0.005493164063,"vfov":49.2,"hfov":78.28,"fovType":"h"},{"id":86,"name":"Marathon","slug":"marathon","yawdeg":0.0033,"vfov":58.715507,"hfov":90,"fovType":"h"},{"id":82,"name":"Marvel Rivals","slug":"marvel-rivals","yawdeg":0.0175,"vfov":58.51551,"hfov":90},{"id":46,"name":"Minecraft Java Edition","slug":"minecraft","vfov":70,"hfov":102.45,"fovType":"v"},{"id":47,"name":"Overwatch","slug":"overwatch","yawdeg":0.0066,"vfov":70.53,"hfov":103},{"id":72,"name":"Overwatch 2","slug":"overwatch-2","yawdeg":0.0066,"vfov":70.53,"hfov":103},{"id":48,"name":"Paladins","slug":"paladins","yawdeg":0.009155273438,"vfov":67.67,"hfov":100,"fovType":"h"},{"id":49,"name":"Payday 2","slug":"payday-2","yawdeg":0.15,"vfov":51.08,"hfov":80.69,"fovType":"h4:3"},{"id":81,"name":"Payday 3","slug":"payday-3","yawdeg":0.07,"vfov":60,"hfov":91.49284},{"id":50,"name":"PUBG","slug":"player-unknown-battlegrounds","yawdeg":2.222,"vfov":59,"hfov":90},{"id":51,"name":"Quake Live","slug":"quake-live","yawdeg":0.022,"vfov":83.58,"hfov":115.63,"fovType":"h4:3"},{"id":52,"name":"Realm Royale","slug":"realm-royale","yawdeg":0.009155273438,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":53,"name":"Ring of Elysium","slug":"ring-of-elysium","yawdeg":2.222,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":54,"name":"Roblox","slug":"roblox","yawdeg":0.39789557451,"vfov":80,"hfov":112.327252,"fovType":"v"},{"id":55,"name":"Rogue Company","slug":"rogue-company","yawdeg":0.0227289,"vfov":42,"hfov":68.621206},{"id":56,"name":"Rust","slug":"rust","yawdeg":0.1125,"vfov":75,"hfov":107.51,"fovType":"v"},{"id":87,"name":"s&box","slug":"sandbox","yawdeg":0.0078125,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":80,"name":"Spectre Divide","slug":"spectre-divide","yawdeg":0.0715206,"vfov":70.53,"hfov":103,"fovType":"h"},{"id":68,"name":"Splitgate","slug":"splitgate","yawdeg":0.93740625,"vfov":58.71551,"hfov":90},{"id":83,"name":"Splitgate 2","slug":"splitgate-2","yawdeg":0.011172707756232688,"vfov":58.7155,"hfov":90,"fovType":"h"},{"id":57,"name":"Squad","slug":"squad","yawdeg":0.1749825,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":58,"name":"Team Fortress 2","slug":"team-fortress-2","yawdeg":0.022,"vfov":59.84,"hfov":91.31,"fovType":"h4:3"},{"id":74,"name":"THE FINALS","slug":"the-finals","yawdeg":0.000790322,"vfov":71,"hfov":103.4817,"fovType":"v"},{"id":59,"name":"Titanfall 2","slug":"titanfall-2","yawdeg":0.022,"vfov":55.41,"hfov":86.07},{"id":60,"name":"Tom Clancy's Rainbow 6: Siege","slug":"rainbow-6-siege","yawdeg":0.005729577951308232,"yawrad":0.0001,"vfov":60,"hfov":91.49,"fovType":"v"},{"id":61,"name":"Tom Clancy's The Division 2","slug":"the-division-2","yawdeg":0.0044691,"vfov":43,"hfov":70.01,"fovType":"v"},{"id":62,"name":"Unturned","slug":"unturned","yawdeg":0.1,"vfov":90,"hfov":121.28,"fovType":"v"},{"id":63,"name":"Valheim","slug":"valheim","yawdeg":0.05,"vfov":65,"hfov":97.114332,"fovType":"v"},{"id":64,"name":"Valorant","slug":"valorant","yawdeg":0.07,"vfov":70.53,"hfov":103},{"id":65,"name":"Warface","slug":"warface","yawdeg":0.00333000333,"vfov":59.84,"hfov":91.31,"fovType":"h4:3"},{"id":66,"name":"Warframe","slug":"warframe","yawdeg":0.007566132006,"vfov":65,"hfov":97.11,"fovType":"v"},{"id":77,"name":"XDefiant","slug":"xdefiant","yawdeg":0.00170729845,"vfov":67.67,"hfov":100,"fovType":"h"},{"id":76,"name":"Xonotic","slug":"xonotic","yawdeg":0.022,"vfov":83.58166,"hfov":115.6336,"fovType":"h4:3"},{"id":67,"name":"Zula","slug":"zula","yawdeg":0.12012012012,"vfov":62,"hfov":93.777,"fovType":"v"},{"id":92,"name":"GTFO","slug":"gtfo","yawdeg":0.15},{"id":93,"name":"Ready or Not","slug":"ready-or-not","yawdeg":0.175},{"id":94,"name":"Fate Trigger","slug":"fate-trigger","yawdeg":0.0000875},{"id":95,"name":"ELDEN RING NIGHTREIGN","slug":"elden-ring-nightreign","yawdeg":0.00971429},{"id":96,"name":"The Last of Us Part II","slug":"the-last-of-us-part-ii","yawdeg":0.003},{"id":97,"name":"BuildNow GG","slug":"buildnow-gg","yawdeg":0.003},{"id":98,"name":"PANICORE","slug":"panicore","yawdeg":0.175},{"id":99,"name":"Metal Gear Solid Δ: Snake Eater","slug":"metal-gear-solid-snake-eater","yawdeg":0.021},{"id":100,"name":"DOOM: The Dark Ages","slug":"doom-the-dark-ages","yawdeg":0.022},{"id":101,"name":"DEADSHOT.io","slug":"deadshot-io","yawdeg":0.0716197407285855},{"id":102,"name":"Suit for Hire","slug":"suit-for-hire","yawdeg":0.14},{"id":103,"name":"KovaaK's","slug":"kovaak-s","yawdeg":0.021999999874285716},{"id":104,"name":"STRAFTAT","slug":"straftat","yawdeg":0.10000000000000002},{"id":105,"name":"Battle Teams 2","slug":"battle-teams-2","yawdeg":0.05},{"id":106,"name":"Just Cause 4","slug":"just-cause-4","yawdeg":0.0004774648958333334},{"id":107,"name":"Arena Breakout: Infinite","slug":"arena-breakout-infinite","yawdeg":0.10237450588235296},{"id":108,"name":"Just Cause 3","slug":"just-cause-3","yawdeg":0.014651711475409838},{"id":109,"name":"Just Cause 2","slug":"just-cause-2","yawdeg":0.0026857404651162795},{"id":110,"name":"Black Mesa","slug":"black-mesa","yawdeg":0.022},{"id":111,"name":"Mini Royale","slug":"mini-royale","yawdeg":0.09625},{"id":112,"name":"Schedule I","slug":"schedule-i","yawdeg":0.0016666666666666668},{"id":113,"name":"The First Berserker: Khazan","slug":"the-first-berserker-khazan","yawdeg":0.0024},{"id":114,"name":"Monster Hunter Wilds","slug":"monster-hunter-wilds","yawdeg":0.006960816595324334},{"id":115,"name":"Mecha BREAK","slug":"mecha-break","yawdeg":0.08333333333333334},{"id":116,"name":"Pixel Strike 3D","slug":"pixel-strike-3d","yawdeg":0.03906248500000001},{"id":117,"name":"MiSide","slug":"miside","yawdeg":0.0030000000000000005},{"id":118,"name":"Kingdom Come: Deliverance II","slug":"kingdom-come-deliverance-ii","yawdeg":0.01775999166666667},{"id":119,"name":"ALARA Prime","slug":"alara-prime","yawdeg":0.20855690168818275},{"id":120,"name":"Beyond Citadel","slug":"beyond-citadel","yawdeg":0.175},{"id":121,"name":"Kingdom Come: Deliverance","slug":"kingdom-come-deliverance","yawdeg":0.01775999166666667},{"id":122,"name":"Risk of Rain 2","slug":"risk-of-rain-2","yawdeg":0.5},{"id":123,"name":"Redmatch 2","slug":"redmatch-2","yawdeg":0.05},{"id":124,"name":"Blood Strike","slug":"blood-strike","yawdeg":0.0014323944444444444},{"id":125,"name":"Roboquest","slug":"roboquest","yawdeg":0.000427735140562249},{"id":126,"name":"Caliber","slug":"caliber","yawdeg":0.00125},{"id":127,"name":"Dark and Darker","slug":"dark-and-darker","yawdeg":0.17498250174982502},{"id":128,"name":"Warlander","slug":"warlander","yawdeg":0.08333333333333334},{"id":129,"name":"Pixel Gun 3D: PC Edition","slug":"pixel-gun-3d-pc-edition","yawdeg":0.0038684210526315796},{"id":130,"name":"Stumble Guys","slug":"stumble-guys","yawdeg":0.07875000000000001},{"id":131,"name":"Black Myth: Wukong","slug":"black-myth-wukong","yawdeg":0.01429166666666667},{"id":132,"name":"Silent Hill 2","slug":"silent-hill-2","yawdeg":0.37329600000000007},{"id":133,"name":"FragPunk","slug":"fragpunk","yawdeg":0.05555002564102565},{"id":134,"name":"Smite 2","slug":"smite-2","yawdeg":0.007324216666666667},{"id":135,"name":"Bodycam","slug":"bodycam","yawdeg":0.1225},{"id":136,"name":"Concord","slug":"concord","yawdeg":0.07},{"id":137,"name":"Dungeonborne","slug":"dungeonborne","yawdeg":0.0014},{"id":138,"name":"Strinova","slug":"strinova","yawdeg":0.01388194445795501},{"id":139,"name":"Chained Together","slug":"chained-together","yawdeg":0.175},{"id":140,"name":"Bloxd.io","slug":"bloxd-io","yawdeg":0.006600000585989576},{"id":141,"name":"ULTRAKILL","slug":"ultrakill","yawdeg":0.005},{"id":142,"name":"Gray Zone Warfare","slug":"gray-zone-warfare","yawdeg":0.0630000001575},{"id":143,"name":"3D Aim Trainer","slug":"3d-aim-trainer","yawdeg":0.006603773},{"id":144,"name":"ARK: Survival Evolved","slug":"ark-survival-evolved","yawdeg":0.17498152972},{"id":145,"name":"ARK: Survival Ascended","slug":"ark-survival-ascended","yawdeg":0.007},{"id":146,"name":"Back 4 Blood","slug":"back-4-blood","yawdeg":0.00233309976},{"id":147,"name":"Battlefield 4","slug":"battlefield-4","yawdeg":0.004153944375},{"id":148,"name":"BlackShot: Mercenary Warfare FPS","slug":"blackshot-mercenary-warfare-fps","yawdeg":0.00035},{"id":149,"name":"CrossFire","slug":"crossfire","yawdeg":0.004083333},{"id":150,"name":"Combat Master","slug":"combat-master","yawdeg":0.001},{"id":151,"name":"Enlisted","slug":"enlisted","yawdeg":0.05384615384615385},{"id":152,"name":"Fallout 76","slug":"fallout-76","yawdeg":3.77992440151},{"id":153,"name":"Farlight 84","slug":"farlight-84","yawdeg":0.022072},{"id":154,"name":"Half-Life 2","slug":"half-life-2","yawdeg":0.02199999511},{"id":155,"name":"Left 4 Dead 2","slug":"left-4-dead-2","yawdeg":0.02199999511},{"id":156,"name":"Lethal Company","slug":"lethal-company","yawdeg":0.008166666667},{"id":157,"name":"Lost Light","slug":"lost-light","yawdeg":0.001590909090909091},{"id":158,"name":"My Hero Ultra Rumble","slug":"my-hero-ultra-rumble","yawdeg":0.0006222222222222224},{"id":159,"name":"Naraka Bladepoint","slug":"naraka-bladepoint","yawdeg":0.004083333333333334},{"id":160,"name":"New World","slug":"new-world","yawdeg":1},{"id":161,"name":"osu!","slug":"osu","yawdeg":0.0796},{"id":162,"name":"Point Blank","slug":"point-blank","yawdeg":0.2916666667},{"id":163,"name":"Quake Champions","slug":"quake-champions","yawdeg":0.02199999511},{"id":164,"name":"Serious Sam 2","slug":"serious-sam-2","yawdeg":0.1718876066},{"id":165,"name":"Serious Sam 3","slug":"serious-sam-3","yawdeg":0.1718876066},{"id":166,"name":"Serious Sam 4","slug":"serious-sam-4","yawdeg":0.175},{"id":167,"name":"Serious Sam Classics: Revolution","slug":"serious-sam-classics-revolution","yawdeg":0.25},{"id":168,"name":"Spellbreak","slug":"spellbreak","yawdeg":0.008},{"id":169,"name":"Stalcraft","slug":"stalcraft","yawdeg":0.006600000377142879},{"id":170,"name":"State of Decay 2","slug":"state-of-decay-2","yawdeg":0.014000000000000002},{"id":171,"name":"Tom Clancy's Rainbow 6 Extraction","slug":"tom-clancy-s-rainbow-6-extraction","yawdeg":0.00572957914},{"id":172,"name":"War Rock","slug":"war-rock","yawdeg":0.0025},{"id":173,"name":"World of Tanks","slug":"world-of-tanks","yawdeg":0.14323967212731376},{"id":174,"name":"World of Tanks Blitz","slug":"world-of-tanks-blitz","yawdeg":0.0007865168539325844}];
+    var MG_GAMES_DATA = [{"id":2,"name":"1v1.LOL","slug":"1v1-lol","yawdeg":0.006052164616,"vfov":50.534016,"hfov":80},{"id":3,"name":"7 Days to Die","slug":"7-days-to-die","yawdeg":0.25,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":4,"name":"Aim Gods","slug":"aim-gods","yawdeg":0.0023331,"vfov":72.487,"hfov":105},{"id":5,"name":"Aim Lab","slug":"aim-lab","yawdeg":0.05,"vfov":60,"hfov":91.492845,"fovType":"v"},{"id":1,"name":"Aiming.Pro","slug":"aiming-pro","yawrad":0.001,"vfov":70.5328,"hfov":103},{"id":6,"name":"Aimtastic","slug":"aimtastic","yawdeg":0.022,"vfov":70.53,"hfov":102.997106,"fovType":"v"},{"id":7,"name":"Apex Legends","slug":"apex-legends","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":85,"name":"Arc Raiders","slug":"arc-raiders","yawdeg":0.001360975,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":8,"name":"Arma 3","slug":"arma-3","yawdeg":0.05904385585,"vfov":56.25,"hfov":87.076974},{"id":9,"name":"Battalion 1944","slug":"battalion-1944","yawdeg":0.0175,"vfov":63.09,"hfov":95,"fovType":"h"},{"id":75,"name":"BattleBit Remastered","slug":"battle-bit","yawdeg":0.0005,"vfov":90,"hfov":121.2845,"fovType":"v"},{"id":89,"name":"Battlefield 2042","slug":"battlefield-2042","yawrad":0.04,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":84,"name":"Battlefield 6","slug":"battlefield-6","yawdeg":0.00176303316709834,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":10,"name":"Battlefield V/1/Hardline","slug":"battlefield-v","yawrad":0.04,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":11,"name":"Black Squad","slug":"black-squad","yawdeg":0.005493164063,"vfov":61,"hfov":92.64,"fovType":"v"},{"id":70,"name":"Bloodhunt","slug":"bloodhunt","yawdeg":0.06605940942,"vfov":67.6727,"hfov":100,"fovType":"h"},{"id":12,"name":"Borderlands 1/2","slug":"borderlands","yawdeg":0.005493164063,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":13,"name":"Borderlands 3","slug":"borderlands-3","yawdeg":0.007003891051,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":15,"name":"Call of Duty: Black Ops 4","slug":"call-of-duty-black-ops-4","yawdeg":0.006605686395,"vfov":58.72,"hfov":90},{"id":79,"name":"Call of Duty: Black Ops 6","slug":"call-of-duty-black-ops-6","yawdeg":0.0066,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":18,"name":"Call of Duty: Black Ops Cold War","slug":"call-of-duty-black-ops-cold-war","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":16,"name":"Call of Duty: Modern Warfare","slug":"call-of-duty","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":17,"name":"Call of Duty: Warzone","slug":"call-of-duty-warzone","yawdeg":0.0066,"vfov":58.72,"hfov":90},{"id":14,"name":"Call of Duty: WWII","slug":"call-of-duty-wwii","yawdeg":0.022,"vfov":51.07719,"hfov":80.69094,"fovType":"h4:3"},{"id":19,"name":"Creative Destruction","slug":"creative-destruction","yawdeg":0.000390625,"vfov":50,"hfov":79.32,"fovType":"v"},{"id":21,"name":"CS 1.6","slug":"cs-16","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h"},{"id":73,"name":"CS2","slug":"cs-2","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":20,"name":"CS:GO","slug":"cs-go","yawdeg":0.022,"vfov":73.74,"hfov":106.26,"fovType":"h4:3"},{"id":22,"name":"Cyberpunk 2077","slug":"cyberpunk","yawdeg":0.01,"vfov":80,"hfov":50.534016},{"id":23,"name":"Darwin Project","slug":"darwin-project","yawdeg":0.00174504843,"vfov":58.72,"hfov":90},{"id":24,"name":"DayZ","slug":"dayz","yawdeg":0.178571428571,"vfov":71.8443,"hfov":104.3462,"fovType":"v"},{"id":78,"name":"Deadlock","slug":"deadlock","yawdeg":0.044,"vfov":46.82645,"hfov":75.17818,"fovType":"h4:3"},{"id":25,"name":"Deep Rock Galactic","slug":"deep-rock-galactic","yawdeg":0.000133667006,"vfov":67.672748,"hfov":100,"fovType":"h"},{"id":88,"name":"Delta Force","slug":"delta-force","yawdeg":0.01,"vfov":58.715507,"hfov":90,"fovType":"h"},{"id":91,"name":"Diabotical","slug":"diabotical","yawdeg":0.01666667,"vfov":103,"hfov":131.789393,"fovType":"v"},{"id":26,"name":"Destiny 2","slug":"destiny-2","yawdeg":0.0066,"vfov":51.8,"hfov":81.6},{"id":27,"name":"Doom Eternal","slug":"doom-eternal","yawdeg":0.022,"vfov":58.715507,"hfov":90},{"id":28,"name":"Dying Light","slug":"dying-light","yawdeg":0.008333333333,"vfov":52,"hfov":81.85582,"fovType":"v"},{"id":90,"name":"Echo Point Nova","slug":"echo-point-nova","yawdeg":0.00093324,"vfov":88.507155,"hfov":120,"fovType":"h"},{"id":29,"name":"Escape from Tarkov","slug":"escape-from-tarkov","yawdeg":0.125,"vfov":50,"hfov":79.316879,"fovType":"v"},{"id":30,"name":"Fallout 4","slug":"fallout-4","yawdeg":3.78,"vfov":50.53402,"hfov":80},{"id":31,"name":"Far Cry 3","slug":"far-cry-3","yawdeg":0.18,"vfov":58.19,"hfov":89.38,"fovType":"h4:3"},{"id":32,"name":"Far Cry 4","slug":"far-cry-4","yawdeg":0.036,"vfov":47,"hfov":75},{"id":34,"name":"Far Cry 5","slug":"far-cry","yawdeg":0.022,"vfov":46.69,"hfov":75},{"id":33,"name":"Far Cry Primal","slug":"far-cry-primal","yawdeg":0.053820025834,"vfov":47,"hfov":75},{"id":35,"name":"Fortnite","slug":"fortnite","yawdeg":0.005555,"vfov":56,"hfov":80},{"id":36,"name":"Garry's Mod","slug":"garrys-mod","yawdeg":0.022,"vfov":73.7398,"hfov":106.2602,"fovType":"h4:3"},{"id":37,"name":"Gears 5","slug":"gears","yawdeg":0.012438884908,"vfov":50.53,"hfov":80},{"id":38,"name":"Halo","slug":"halo","yawdeg":0.022222222222,"vfov":49.2,"hfov":78.28,"fovType":"h4:3"},{"id":71,"name":"Halo Infinite","slug":"halo-infinite","yawdeg":0.0225,"vfov":49.1491,"hfov":78.2205},{"id":39,"name":"Heroes & Generals","slug":"heroes-generals","yawdeg":0.151260504202,"vfov":60,"hfov":91.49,"fovType":"v"},{"id":40,"name":"Hunt: Showdown","slug":"hunt-showdown","yawdeg":0.042971834634811745,"yawrad":0.00075,"vfov":55,"hfov":85.56559,"fovType":"v"},{"id":41,"name":"Hyperscape","slug":"hyperscape","yawdeg":0.005729577951308232,"yawrad":0.0001,"vfov":65,"hfov":97.114332,"fovType":"v"},{"id":42,"name":"Insurgency","slug":"insurgency","yawdeg":0.022,"vfov":73.739795,"hfov":106.260205,"fovType":"h4:3"},{"id":43,"name":"Insurgency: Sandstorm","slug":"insurgency-sandstorm","yawdeg":0.14,"vfov":73.7398,"hfov":106.2602,"fovType":"h4:3"},{"id":69,"name":"Ironsight","slug":"ironsight","yawdeg":0.01,"vfov":60,"hfov":91.49284,"fovType":"h"},{"id":44,"name":"Krunker","slug":"krunker","yawdeg":0.137509549274,"vfov":70,"hfov":102.447858,"fovType":"v"},{"id":45,"name":"Line of Sight","slug":"line-of-sight","yawdeg":0.005493164063,"vfov":49.2,"hfov":78.28,"fovType":"h"},{"id":86,"name":"Marathon","slug":"marathon","yawdeg":0.0033,"vfov":58.715507,"hfov":90,"fovType":"h"},{"id":82,"name":"Marvel Rivals","slug":"marvel-rivals","yawdeg":0.0175,"vfov":58.51551,"hfov":90},{"id":46,"name":"Minecraft Java Edition","slug":"minecraft","vfov":70,"hfov":102.45,"fovType":"v"},{"id":47,"name":"Overwatch","slug":"overwatch","yawdeg":0.0066,"vfov":70.53,"hfov":103},{"id":72,"name":"Overwatch 2","slug":"overwatch-2","yawdeg":0.0066,"vfov":70.53,"hfov":103},{"id":48,"name":"Paladins","slug":"paladins","yawdeg":0.009155273438,"vfov":67.67,"hfov":100,"fovType":"h"},{"id":49,"name":"Payday 2","slug":"payday-2","yawdeg":0.15,"vfov":51.08,"hfov":80.69,"fovType":"h4:3"},{"id":81,"name":"Payday 3","slug":"payday-3","yawdeg":0.07,"vfov":60,"hfov":91.49284},{"id":50,"name":"PUBG","slug":"player-unknown-battlegrounds","yawdeg":2.222,"vfov":59,"hfov":90},{"id":51,"name":"Quake Live","slug":"quake-live","yawdeg":0.022,"vfov":83.58,"hfov":115.63,"fovType":"h4:3"},{"id":52,"name":"Realm Royale","slug":"realm-royale","yawdeg":0.009155273438,"vfov":58.72,"hfov":90,"fovType":"h"},{"id":53,"name":"Ring of Elysium","slug":"ring-of-elysium","yawdeg":2.222,"vfov":55,"hfov":85.57,"fovType":"v"},{"id":54,"name":"Roblox","slug":"roblox","yawdeg":0.39789557451,"vfov":80,"hfov":112.327252,"fovType":"v"},{"id":55,"name":"Rogue Company","slug":"rogue-company","yawdeg":0.0227289,"vfov":42,"hfov":68.621206},{"id":56,"name":"Rust","slug":"rust","yawdeg":0.1125,"vfov":75,"hfov":107.51,"fovType":"v"},{"id":87,"name":"s&box","slug":"sandbox","yawdeg":0.0078125,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":80,"name":"Spectre Divide","slug":"spectre-divide","yawdeg":0.0715206,"vfov":70.53,"hfov":103,"fovType":"h"},{"id":68,"name":"Splitgate","slug":"splitgate","yawdeg":0.93740625,"vfov":58.71551,"hfov":90},{"id":83,"name":"Splitgate 2","slug":"splitgate-2","yawdeg":0.011172707756232688,"vfov":58.7155,"hfov":90,"fovType":"h"},{"id":57,"name":"Squad","slug":"squad","yawdeg":0.1749825,"vfov":58.71551,"hfov":90,"fovType":"h"},{"id":58,"name":"Team Fortress 2","slug":"team-fortress-2","yawdeg":0.022,"vfov":59.84,"hfov":91.31,"fovType":"h4:3"},{"id":74,"name":"THE FINALS","slug":"the-finals","yawdeg":0.000790322,"vfov":71,"hfov":103.4817,"fovType":"v"},{"id":59,"name":"Titanfall 2","slug":"titanfall-2","yawdeg":0.022,"vfov":55.41,"hfov":86.07},{"id":60,"name":"Tom Clancy's Rainbow 6: Siege","slug":"rainbow-6-siege","yawdeg":0.005729577951308232,"yawrad":0.0001,"vfov":60,"hfov":91.49,"fovType":"v"},{"id":61,"name":"Tom Clancy's The Division 2","slug":"the-division-2","yawdeg":0.0044691,"vfov":43,"hfov":70.01,"fovType":"v"},{"id":62,"name":"Unturned","slug":"unturned","yawdeg":0.1,"vfov":90,"hfov":121.28,"fovType":"v"},{"id":63,"name":"Valheim","slug":"valheim","yawdeg":0.05,"vfov":65,"hfov":97.114332,"fovType":"v"},{"id":64,"name":"Valorant","slug":"valorant","yawdeg":0.07,"vfov":70.53,"hfov":103},{"id":65,"name":"Warface","slug":"warface","yawdeg":0.00333000333,"vfov":59.84,"hfov":91.31,"fovType":"h4:3"},{"id":66,"name":"Warframe","slug":"warframe","yawdeg":0.007566132006,"vfov":65,"hfov":97.11,"fovType":"v"},{"id":77,"name":"XDefiant","slug":"xdefiant","yawdeg":0.00170729845,"vfov":67.67,"hfov":100,"fovType":"h"},{"id":76,"name":"Xonotic","slug":"xonotic","yawdeg":0.022,"vfov":83.58166,"hfov":115.6336,"fovType":"h4:3"},{"id":67,"name":"Zula","slug":"zula","yawdeg":0.12012012012,"vfov":62,"hfov":93.777,"fovType":"v"},{"id":92,"name":"GTFO","slug":"gtfo","yawdeg":0.15},{"id":93,"name":"Ready or Not","slug":"ready-or-not","yawdeg":0.175},{"id":94,"name":"Fate Trigger","slug":"fate-trigger","yawdeg":0.0000875},{"id":95,"name":"ELDEN RING NIGHTREIGN","slug":"elden-ring-nightreign","yawdeg":0.00971429},{"id":96,"name":"The Last of Us Part II","slug":"the-last-of-us-part-ii","yawdeg":0.003},{"id":97,"name":"BuildNow GG","slug":"buildnow-gg","yawdeg":0.003},{"id":98,"name":"PANICORE","slug":"panicore","yawdeg":0.175},{"id":99,"name":"Metal Gear Solid Δ: Snake Eater","slug":"metal-gear-solid-snake-eater","yawdeg":0.021},{"id":100,"name":"DOOM: The Dark Ages","slug":"doom-the-dark-ages","yawdeg":0.022},{"id":101,"name":"DEADSHOT.io","slug":"deadshot-io","yawdeg":0.0716197407285855},{"id":102,"name":"Suit for Hire","slug":"suit-for-hire","yawdeg":0.14},{"id":103,"name":"KovaaK's","slug":"kovaak-s","yawdeg":0.021999999874285716},{"id":104,"name":"STRAFTAT","slug":"straftat","yawdeg":0.10000000000000002},{"id":105,"name":"Battle Teams 2","slug":"battle-teams-2","yawdeg":0.05},{"id":106,"name":"Just Cause 4","slug":"just-cause-4","yawdeg":0.0004774648958333334},{"id":107,"name":"Arena Breakout: Infinite","slug":"arena-breakout-infinite","yawdeg":0.10237450588235296},{"id":108,"name":"Just Cause 3","slug":"just-cause-3","yawdeg":0.014651711475409838},{"id":109,"name":"Just Cause 2","slug":"just-cause-2","yawdeg":0.0026857404651162795},{"id":110,"name":"Black Mesa","slug":"black-mesa","yawdeg":0.022},{"id":111,"name":"Mini Royale","slug":"mini-royale","yawdeg":0.09625},{"id":112,"name":"Schedule I","slug":"schedule-i","yawdeg":0.0016666666666666668},{"id":113,"name":"The First Berserker: Khazan","slug":"the-first-berserker-khazan","yawdeg":0.0024},{"id":114,"name":"Monster Hunter Wilds","slug":"monster-hunter-wilds","yawdeg":0.006960816595324334},{"id":115,"name":"Mecha BREAK","slug":"mecha-break","yawdeg":0.08333333333333334},{"id":116,"name":"Pixel Strike 3D","slug":"pixel-strike-3d","yawdeg":0.03906248500000001},{"id":117,"name":"MiSide","slug":"miside","yawdeg":0.0030000000000000005},{"id":118,"name":"Kingdom Come: Deliverance II","slug":"kingdom-come-deliverance-ii","yawdeg":0.01775999166666667},{"id":119,"name":"ALARA Prime","slug":"alara-prime","yawdeg":0.20855690168818275},{"id":120,"name":"Beyond Citadel","slug":"beyond-citadel","yawdeg":0.175},{"id":121,"name":"Kingdom Come: Deliverance","slug":"kingdom-come-deliverance","yawdeg":0.01775999166666667},{"id":122,"name":"Risk of Rain 2","slug":"risk-of-rain-2","yawdeg":0.5},{"id":123,"name":"Redmatch 2","slug":"redmatch-2","yawdeg":0.05},{"id":124,"name":"Blood Strike","slug":"blood-strike","yawdeg":0.0014323944444444444},{"id":125,"name":"Roboquest","slug":"roboquest","yawdeg":0.000427735140562249},{"id":126,"name":"Caliber","slug":"caliber","yawdeg":0.00125},{"id":127,"name":"Dark and Darker","slug":"dark-and-darker","yawdeg":0.17498250174982502},{"id":128,"name":"Warlander","slug":"warlander","yawdeg":0.08333333333333334},{"id":129,"name":"Pixel Gun 3D: PC Edition","slug":"pixel-gun-3d-pc-edition","yawdeg":0.0038684210526315796},{"id":130,"name":"Stumble Guys","slug":"stumble-guys","yawdeg":0.07875000000000001},{"id":131,"name":"Black Myth: Wukong","slug":"black-myth-wukong","yawdeg":0.01429166666666667},{"id":132,"name":"Silent Hill 2","slug":"silent-hill-2","yawdeg":0.37329600000000007},{"id":133,"name":"FragPunk","slug":"fragpunk","yawdeg":0.05555002564102565},{"id":134,"name":"Smite 2","slug":"smite-2","yawdeg":0.007324216666666667},{"id":135,"name":"Bodycam","slug":"bodycam","yawdeg":0.1225},{"id":136,"name":"Concord","slug":"concord","yawdeg":0.07},{"id":137,"name":"Dungeonborne","slug":"dungeonborne","yawdeg":0.0014},{"id":138,"name":"Strinova","slug":"strinova","yawdeg":0.01388194445795501},{"id":139,"name":"Chained Together","slug":"chained-together","yawdeg":0.175},{"id":140,"name":"Bloxd.io","slug":"bloxd-io","yawdeg":0.006600000585989576},{"id":141,"name":"ULTRAKILL","slug":"ultrakill","yawdeg":0.005},{"id":142,"name":"Gray Zone Warfare","slug":"gray-zone-warfare","yawdeg":0.0630000001575},{"id":143,"name":"3D Aim Trainer","slug":"3d-aim-trainer","yawdeg":0.006603773},{"id":144,"name":"ARK: Survival Evolved","slug":"ark-survival-evolved","yawdeg":0.17498152972},{"id":145,"name":"ARK: Survival Ascended","slug":"ark-survival-ascended","yawdeg":0.007},{"id":146,"name":"Back 4 Blood","slug":"back-4-blood","yawdeg":0.00233309976},{"id":147,"name":"Battlefield 4","slug":"battlefield-4","yawdeg":0.004153944375},{"id":148,"name":"BlackShot: Mercenary Warfare FPS","slug":"blackshot-mercenary-warfare-fps","yawdeg":0.00035},{"id":149,"name":"CrossFire","slug":"crossfire","yawdeg":0.004083333},{"id":150,"name":"Combat Master","slug":"combat-master","yawdeg":0.001},{"id":151,"name":"Enlisted","slug":"enlisted","yawdeg":0.05384615384615385},{"id":152,"name":"Fallout 76","slug":"fallout-76","yawdeg":3.77992440151},{"id":153,"name":"Farlight 84","slug":"farlight-84","yawdeg":0.022072},{"id":154,"name":"Half-Life 2","slug":"half-life-2","yawdeg":0.02199999511},{"id":155,"name":"Left 4 Dead 2","slug":"left-4-dead-2","yawdeg":0.02199999511},{"id":156,"name":"Lethal Company","slug":"lethal-company","yawdeg":0.008166666667},{"id":157,"name":"Lost Light","slug":"lost-light","yawdeg":0.001590909090909091},{"id":158,"name":"My Hero Ultra Rumble","slug":"my-hero-ultra-rumble","yawdeg":0.0006222222222222224},{"id":159,"name":"Naraka Bladepoint","slug":"naraka-bladepoint","yawdeg":0.004083333333333334},{"id":160,"name":"New World","slug":"new-world","yawdeg":1},{"id":161,"name":"osu!","slug":"osu","yawdeg":0.0796},{"id":162,"name":"Point Blank","slug":"point-blank","yawdeg":0.2916666667},{"id":163,"name":"Quake Champions","slug":"quake-champions","yawdeg":0.02199999511},{"id":164,"name":"Serious Sam 2","slug":"serious-sam-2","yawdeg":0.1718876066},{"id":165,"name":"Serious Sam 3","slug":"serious-sam-3","yawdeg":0.1718876066},{"id":166,"name":"Serious Sam 4","slug":"serious-sam-4","yawdeg":0.175},{"id":167,"name":"Serious Sam Classics: Revolution","slug":"serious-sam-classics-revolution","yawdeg":0.25},{"id":168,"name":"Spellbreak","slug":"spellbreak","yawdeg":0.008},{"id":169,"name":"Stalcraft","slug":"stalcraft","yawdeg":0.006600000377142879},{"id":170,"name":"State of Decay 2","slug":"state-of-decay-2","yawdeg":0.014000000000000002},{"id":171,"name":"Tom Clancy's Rainbow 6 Extraction","slug":"tom-clancy-s-rainbow-6-extraction","yawdeg":0.00572957914},{"id":172,"name":"War Rock","slug":"war-rock","yawdeg":0.0025},{"id":173,"name":"World of Tanks","slug":"world-of-tanks","yawdeg":0.14323967212731376},{"id":174,"name":"World of Tanks Blitz","slug":"world-of-tanks-blitz","yawdeg":0.0007865168539325844}];
 
     // ========= MULTI-GAME CONVERTER =========
     var mgGames = [];
@@ -679,6 +718,33 @@
       }
     }
 
+    function populateYawPresets() {
+      var firstSel = document.getElementById('q2d-yaw-game');
+      if (firstSel && firstSel.options.length > 1) return;
+      var seen = {};
+      var games = MG_GAMES_DATA.filter(function(g) { return g.yawdeg != null; });
+      games.sort(function(a, b) { return a.name.localeCompare(b.name); });
+      var opts = [];
+      games.forEach(function(g) {
+        if (!seen[g.yawdeg]) {
+          seen[g.yawdeg] = true;
+          opts.push({ yawdeg: g.yawdeg, name: g.name });
+        }
+      });
+      opts.sort(function(a, b) { return a.yawdeg - b.yawdeg; });
+      var selects = ['q2d-yaw-game', 'q2d-new-yaw-game', 'd2q-yaw-game'];
+      selects.forEach(function(sid) {
+        var sel = document.getElementById(sid);
+        if (!sel) return;
+        opts.forEach(function(o) {
+          var opt = document.createElement('option');
+          opt.value = o.yawdeg;
+          opt.textContent = o.name + ' (' + o.yawdeg + ')';
+          sel.appendChild(opt);
+        });
+      });
+    }
+
     function getMgGame(id) {
       var slug = document.getElementById(id).value;
       for (var i = 0; i < mgGames.length; i++) {
@@ -722,6 +788,10 @@
         'yawdeg: <span class="cmd">' + src.yawdeg + '</span><br>' +
         'VFOV: <span class="cmd">' + (src.vfov ? src.vfov.toFixed(2) + '&deg;' : '--') + '</span><br>' +
         'HFOV: <span class="cmd">' + (src.hfov ? src.hfov.toFixed(2) + '&deg;' : '--') + '</span>';
+
+      syncFovSlider('mg-source-fov', 'mg-fov-slider');
+      document.getElementById('mg-source-fov-info').innerHTML =
+        src.name + ' &middot; yaw: <span>' + src.yawdeg + '</span> &middot; VFOV: <span>' + (src.vfov ? src.vfov.toFixed(1) + '&deg;' : '--') + '</span> &middot; HFOV: <span>' + (src.hfov ? src.hfov.toFixed(1) + '&deg;' : '--') + '</span>';
       document.getElementById('mg-target-name').textContent = tgt.name;
       document.getElementById('mg-target-info').innerHTML =
         'yawdeg: <span class="cmd">' + tgt.yawdeg + '</span><br>' +
@@ -774,8 +844,26 @@
                     'HFOV (16:9)';
         document.getElementById('mg-target-fov').innerHTML = tgtFov.toFixed(2) + ' &deg; ' + label;
         document.getElementById('mg-target-fov-section').classList.add('visible');
+
+        var largerAngle = Math.max(fov, tgtFov);
+        var maxHW = 85;
+        var coneH = maxHW / Math.tan(deg2rad(largerAngle / 2));
+        coneH = Math.max(18, Math.min(65, coneH));
+        var srcHW = Math.min(coneH * Math.tan(deg2rad(fov / 2)), 95);
+        var tgtHW = Math.min(coneH * Math.tan(deg2rad(tgtFov / 2)), 95);
+        var ax = 100, ay = 14, by = ay + coneH;
+        document.getElementById('mg-fov-cone-container').innerHTML =
+          '<svg viewBox="0 0 200 ' + (by + 22) + '">' +
+            '<polygon points="' + ax + ',' + ay + ' ' + (ax - srcHW).toFixed(1) + ',' + by.toFixed(0) + ' ' + (ax + srcHW).toFixed(1) + ',' + by.toFixed(0) + '" fill="rgba(255,119,89,0.12)" stroke="var(--coral)" stroke-width="1" stroke-dasharray="4,3"/>' +
+            '<polygon points="' + ax + ',' + ay + ' ' + (ax - tgtHW).toFixed(1) + ',' + by.toFixed(0) + ' ' + (ax + tgtHW).toFixed(1) + ',' + by.toFixed(0) + '" fill="rgba(62,207,142,0.18)" stroke="var(--accent-green)" stroke-width="1"/>' +
+            '<line x1="' + ax + '" y1="' + ay + '" x2="' + ax + '" y2="' + (by + 6) + '" stroke="var(--text-dim)" stroke-width="0.5" stroke-dasharray="3,3"/>' +
+            '<text x="' + (ax - srcHW - 3) + '" y="' + (by + 5) + '" fill="var(--coral)" font-family="Inter,sans-serif" font-size="9">' + fov.toFixed(0) + '° ' + src.name + '</text>' +
+            '<text x="' + (ax - tgtHW - 3) + '" y="' + (by - 6) + '" fill="var(--accent-green)" font-family="Inter,sans-serif" font-size="9">' + tgtFov.toFixed(0) + '° ' + tgt.name + '</text>' +
+          '</svg>';
+        document.getElementById('mg-fov-cone-container').style.display = '';
       } else {
         document.getElementById('mg-target-fov').textContent = '--';
+        document.getElementById('mg-fov-cone-container').innerHTML = '';
       }
 
       var quickDpis = [400, 800, 1600];
@@ -822,6 +910,7 @@
     calcFov();
     calcQD();
     loadMultiGameData();
+    populateYawPresets();
   </script>
 
 
