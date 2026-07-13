@@ -128,19 +128,50 @@
           <input type="number" id="q2d-old-dpi" value="1600" step="any" oninput="cm360toQD()">
         </div>
         <div class="form-group">
-          <label>Old resolution (vertical)</label>
-          <input type="number" id="q2d-old-res" value="1080" step="any" oninput="calcQD()">
+          <label>Old resolution</label>
+          <div class="res-tag-row" id="old-res-tags">
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',480)">480</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',720)">720</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',768)">768</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',800)">800</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',900)">900</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',960)">960</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',1024)">1024</button>
+            <button class="res-tag active" onclick="pickRes('q2d-old-res','old-res-tags',1080)">1080</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',1200)">1200</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',1440)">1440</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',1600)">1600</button>
+            <button class="res-tag" onclick="pickRes('q2d-old-res','old-res-tags',2160)">2160</button>
+            <button class="res-tag res-tag-custom-btn" onclick="showResCustom('q2d-old-res','old-res-tags')">custom</button>
+            <input type="number" class="res-tag-custom" id="q2d-old-res" value="1080" step="any" oninput="syncResTags('q2d-old-res','old-res-tags'); calcQD()" style="display:none;">
+          </div>
         </div>
         <div class="form-group">
-          <label>New resolution (vertical)</label>
-          <input type="number" id="q2d-new-res" value="1440" step="any" oninput="calcQD()">
+          <label>New resolution</label>
+          <div class="res-tag-row" id="new-res-tags">
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',480)">480</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',720)">720</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',768)">768</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',800)">800</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',900)">900</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',960)">960</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',1024)">1024</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',1080)">1080</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',1200)">1200</button>
+            <button class="res-tag active" onclick="pickRes('q2d-new-res','new-res-tags',1440)">1440</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',1600)">1600</button>
+            <button class="res-tag" onclick="pickRes('q2d-new-res','new-res-tags',2160)">2160</button>
+            <button class="res-tag res-tag-custom-btn" onclick="showResCustom('q2d-new-res','new-res-tags')">custom</button>
+            <input type="number" class="res-tag-custom" id="q2d-new-res" value="1440" step="any" oninput="syncResTags('q2d-new-res','new-res-tags'); calcQD()" style="display:none;">
+          </div>
         </div>
         <div class="form-group">
-          <label>New DPI</label>
+          <label>New DPI <button class="btn btn-sm btn-secondary" style="margin-left:6px;font-size:10px;padding:1px 6px;" onclick="document.getElementById('q2d-new-dpi').value=document.getElementById('q2d-old-dpi').value; calcQD();">reset</button></label>
           <input type="number" id="q2d-new-dpi" value="1600" step="any" oninput="calcQD()">
         </div>
-        <div class="result-block visible" style="margin-top: 0.75rem; border-left-color: var(--accent-blue);">
-          <b>DPI for new resolution:</b> <span id="q2d-res-dpi">--</span>
+        <div class="form-group">
+          <label>DPI for new resolution</label>
+          <span id="q2d-res-dpi" class="res-dpi-click" onclick="var v=parseFloat(this.textContent); if(!isNaN(v)){document.getElementById('q2d-new-dpi').value=v.toFixed(1); calcQD();}" title="Click to set New DPI" style="font-family:var(--font-mono);font-size:13px;color:var(--accent-green);cursor:pointer;">--</span>
         </div>
       </div>
 
@@ -210,8 +241,12 @@
           <select id="mg-source-game" class="game-select" onchange="calcMultiGame()"></select>
         </div>
         <div class="form-group">
-          <label>Sensitivity</label>
-          <input type="number" id="mg-source-sens" value="1.855519" step="any" oninput="mgSensInput()">
+          <label>DPI</label>
+          <input type="number" id="mg-dpi" value="1600" step="any" oninput="calcMultiGame()">
+        </div>
+        <div class="form-group">
+          <label>FOV</label>
+          <input type="number" id="mg-source-fov" value="133" step="any" oninput="calcMultiGame()">
         </div>
         <div class="form-group">
           <label>cm/360</label>
@@ -222,12 +257,8 @@
           <div class="spectrum-slider-labels"><span>10 cm fast</span><span>60 cm slow</span></div>
         </div>
         <div class="form-group">
-          <label>DPI</label>
-          <input type="number" id="mg-dpi" value="1600" step="any" oninput="calcMultiGame()">
-        </div>
-        <div class="form-group">
-          <label>FOV</label>
-          <input type="number" id="mg-source-fov" value="133" step="any" oninput="calcMultiGame()">
+          <label>Sensitivity</label>
+          <input type="number" id="mg-source-sens" value="1.855519" step="any" oninput="mgSensInput()">
         </div>
         <div class="fov-results" style="margin-top: 0.5rem;">
           <div class="fov-result-card">
@@ -300,6 +331,41 @@
     function deg2rad(d) { return d * (Math.PI / 180); }
     function rad2deg(r) { return r * (180 / Math.PI); }
     function clamp(v, fallback) { var n = parseFloat(v); return isNaN(n) || n < 0 ? fallback : n; }
+
+    function pickRes(inputId, rowId, value) {
+      var input = document.getElementById(inputId);
+      input.value = value;
+      input.style.display = 'none';
+      var row = document.getElementById(rowId);
+      if (row) {
+        row.querySelectorAll('.res-tag').forEach(function(t) {
+          t.classList.toggle('active', parseInt(t.textContent) === value);
+        });
+      }
+      calcQD();
+    }
+
+    function showResCustom(inputId, rowId) {
+      var input = document.getElementById(inputId);
+      input.style.display = '';
+      input.select();
+      var row = document.getElementById(rowId);
+      if (row) {
+        row.querySelectorAll('.res-tag').forEach(function(t) {
+          t.classList.remove('active');
+        });
+      }
+    }
+
+    function syncResTags(inputId, rowId) {
+      var val = parseInt(document.getElementById(inputId).value);
+      var row = document.getElementById(rowId);
+      if (row && !isNaN(val)) {
+        row.querySelectorAll('.res-tag').forEach(function(t) {
+          t.classList.toggle('active', parseInt(t.textContent) === val);
+        });
+      }
+    }
 
     function buildSpectrum(cm360) {
       var pct = Math.max(0, Math.min(100, ((cm360 - 10) / (60 - 10)) * 100));
